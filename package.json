@@ -1,0 +1,66 @@
+{
+  "name": "next-lintel",
+  "version": "0.0.1",
+  "description": "Utility to handle internationalized routing for Next.js app folder.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "index.d.ts",
+    "index.js"
+  ],
+  "bin": {
+    "next-lintel": "./dist/bin/index.js"
+  },
+  "scripts": {
+    "prepublish": "yarn clean && yarn build && yarn test",
+    "build:bin": "yarn esbuild ./src/bin/index.ts --bundle --outfile=./dist/bin/index.js --platform=node",
+    "build": "yarn build:bin",
+    "clean": "rm -rf dist > /dev/null",
+    "format": "pretty-quick",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "test:watch": "jest --watch",
+    "publish:canary": "yarn publish --tag canary"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.1",
+    "@types/jest": "^29.2.6",
+    "colors": "^1.4.0",
+    "esbuild": "^0.17.3",
+    "esbuild-jest": "^0.5.0",
+    "fs-extra": "^11.1.0",
+    "husky": "^8.0.3",
+    "jest": "^29.3.1",
+    "prettier": "^2.8.3",
+    "pretty-quick": "^3.1.3",
+    "typescript": "^4.9.4"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged && yarn test"
+    }
+  },
+  "license": "MIT",
+  "keywords": [
+    "next.js",
+    "i18n",
+    "internationalization",
+    "localization",
+    "localized",
+    "locale",
+    "routes",
+    "react",
+    "next",
+    "nextjs"
+  ],
+  "author": {
+    "name": "Jirka Svoboda",
+    "email": "svobik7@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/svobik7/next-lintel"
+  }
+}

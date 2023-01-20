@@ -1,0 +1,28 @@
+{
+  "name": "next-roots-example",
+  "version": "1.0.0",
+  "description": "Example of using next-roots package",
+  "author": "Jirka Svoboda",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "root": "node ../dist/bin/index.js",
+    "dev": "yarn root && next dev",
+    "build": "yarn root && next build",
+    "start": "next start",
+    "analyze": "yarn root && cross-env ANALYZE=true next build",
+    "analyze:server": "yarn root && cross-env BUNDLE_ANALYZE=server next build",
+    "analyze:browser": "yarn root && cross-env BUNDLE_ANALYZE=browser next build"
+  },
+  "dependencies": {
+    "next": "^13.1.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "next-roots": "link:../"
+  },
+  "devDependencies": {
+    "@next/bundle-analyzer": "^13.1.2",
+    "@types/react": "link:../node_modules/@types/react",
+    "cross-env": "^7.0.2"
+  }
+}
