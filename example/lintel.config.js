@@ -1,85 +1,81 @@
 ///** @type {import('next-roots').} */
 module.exports = {
+  origin: './app/en',
   locales: ['en', 'cs', 'es'],
-  defaultLocale: 'en',
-  routes: [
+  rules: [
     {
-      path: 'account',
-      variants: [
-        { locale: 'cs', href: 'ucet' },
-        { locale: 'es', href: 'cuenta' },
+      originPath: 'account',
+      lintels: [
+        { locale: 'cs', lintelPath: 'ucet' },
+        { locale: 'es', lintelPath: 'cuenta' },
       ],
       children: [
         {
-          path: 'profile',
-          variants: [
+          originPath: 'profile',
+          lintels: [
             // children variant takes parent path as prefix = /cs/ucet/profil or /es/cuenta/perfil
-            { locale: 'cs', href: 'profil' },
-            { locale: 'es', href: 'perfil' },
+            { locale: 'cs', lintelPath: 'profil' },
+            { locale: 'es', lintelPath: 'perfil' },
           ],
           children: [
             {
-              path: 'edit',
-              variants: [
+              originPath: 'edit',
+              lintels: [
                 // children of children variant takes all parents path as prefix = /cs/ucet/profil/upravit or /es/cuenta/perfil/editar
-                { locale: 'cs', href: 'upravit' },
-                { locale: 'es', href: 'editar' },
+                { locale: 'cs', lintelPath: 'upravit' },
+                { locale: 'es', lintelPath: 'editar' },
               ],
             },
           ],
         },
         {
-          path: 'settings',
-          variants: [
-            { locale: 'cs', href: 'nastaveni' },
-            { locale: 'es', href: 'ajustes' },
+          originPath: 'settings',
+          lintels: [
+            { locale: 'cs', lintelPath: 'nastaveni' },
+            { locale: 'es', lintelPath: 'ajustes' },
           ],
         },
       ],
     },
     {
-      path: 'auth',
-      variants: [
-        // empty or missing variant means that "auth" path will be used as translated href for that particular missing locale
-      ],
-      isShadowRoute: true,
+      originPath: '(auth)',
       children: [
         {
-          path: 'login',
-          variants: [
-            { locale: 'cs', href: 'prihlaseni' },
-            { locale: 'es', href: 'acceso' },
+          originPath: 'login',
+          lintels: [
+            { locale: 'cs', lintelPath: 'prihlaseni' },
+            { locale: 'es', lintelPath: 'acceso' },
           ],
         },
         {
-          path: 'signup',
-          variants: [
-            { locale: 'cs', href: 'registrace' },
-            { locale: 'es', href: 'registrarse' },
+          originPath: 'signup',
+          lintels: [
+            { locale: 'cs', lintelPath: 'registrace' },
+            { locale: 'es', lintelPath: 'registrarse' },
           ],
         },
       ],
     },
     {
-      path: 'blog',
-      variants: [
-        { locale: 'cs', href: 'magazin' },
-        { locale: 'es', href: 'revista' },
+      originPath: 'blog',
+      lintels: [
+        { locale: 'cs', lintelPath: 'magazin' },
+        { locale: 'es', lintelPath: 'revista' },
       ],
       children: [
         {
-          path: 'articles',
-          variants: [
-            { locale: 'cs', href: 'clanky' },
-            { locale: 'es', href: 'articulos' },
+          originPath: 'articles',
+          lintels: [
+            { locale: 'cs', lintelPath: 'clanky' },
+            { locale: 'es', lintelPath: 'articulos' },
           ],
           // there is no need to add children for [articlesId] page as that does not need to be translated
         },
         {
-          path: 'authors',
-          variants: [
-            { locale: 'cs', href: 'autori' },
-            { locale: 'es', href: 'autores' },
+          originPath: 'authors',
+          lintels: [
+            { locale: 'cs', lintelPath: 'autori' },
+            { locale: 'es', lintelPath: 'autores' },
           ],
           // there is no need to add children for [authorsId] page as that does not need to be translated
         },

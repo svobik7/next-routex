@@ -6,7 +6,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "root": "node ../dist/bin/index.js",
+    "lintels": "node ../dist/bin/index.js",
     "dev": "yarn root && next dev",
     "build": "yarn root && next build",
     "start": "next start",
