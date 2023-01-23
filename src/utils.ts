@@ -1,20 +1,46 @@
-import { ParentRoute, Route, ShadowRoute } from './types'
+import {
+  ConfigRule,
+  ConfigRuleParent,
+  ConfigRuleParentGroup,
+  PathName,
+} from './types'
 
 import fs from 'fs-extra'
 import path from 'path'
 
-/**
- * Indicates if given route is parent route
- */
-export function isParentRoute(route: Route): route is ParentRoute {
-  return 'children' in route
+export function createPathName(...segments: string[]): PathName {
+  const path = `/${segments.join('/')}`
+  return path.replace(/\/\/+/g, '/') as PathName
+}
+
+export function splitPathName(pathName: PathName): string[] {
+  return pathName.split('/')
+}
+
+export function getPathNameDepth(pathName: PathName) {
+  return splitPathName(pathName).length
 }
 
 /**
- * Indicates if given route is shadow route
+ * Indicates if given route is parent route
  */
-export function isShadowRoute(route: Route): route is ShadowRoute {
-  return isParentRoute(route) && 'isShadowRoute' in route && route.isShadowRoute
+export function isParentRule(rule: ConfigRule): rule is ConfigRuleParent {
+  return 'children' in rule
+}
+
+/**
+ * Indicates if given route is group route = page-less<
+ */
+export function isGroupRule(rule: ConfigRule): rule is ConfigRuleParentGroup {
+  return !!rule.originPath.match(/^\([\w-]+\)$/gi)
+}
+
+export function getRuleLintels(rule: ConfigRule) {
+  return 'lintels' in rule ? rule.lintels : undefined
+}
+
+export function getPathNameLocale(pathName: PathName) {
+  return pathName.split('/').at(1)
 }
 
 /**
