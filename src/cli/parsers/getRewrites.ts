@@ -1,11 +1,6 @@
-import { ConfigRule, ConfigRuleLintel, PathName, Rewrite } from '../../types'
-import {
-  createPathName,
-  getPathNameLocale,
-  getRuleLintels,
-  isGroupRule,
-  isParentRule,
-} from '../../utils'
+import { ConfigRule, ConfigRuleLintel, Rewrite } from '../../types'
+import { getRuleLintels, isParentRule } from '../utils/parseUtils'
+import { getPathLocale, getPathName } from '../utils/pathUtils'
 
 type CreateRewriteOptions = {
   rule: ConfigRule
@@ -19,15 +14,14 @@ function createRewrite({
   parentRewrite,
 }: CreateRewriteOptions): Rewrite {
   return {
-    originPath: createPathName(
+    originPath: getPathName(
       parentRewrite ? parentRewrite.originPath : lintel.locale,
       rule.originPath
     ),
-    lintelPath: createPathName(
+    lintelPath: getPathName(
       parentRewrite ? parentRewrite.lintelPath : lintel.locale,
       lintel.lintelPath
     ),
-    noRoute: isGroupRule(rule),
   }
 }
 
@@ -39,7 +33,7 @@ type GetRewriteFactory = {
 function getRewriteFactory({ rule, parentRewrites }: GetRewriteFactory) {
   return (lintel: ConfigRuleLintel): Rewrite => {
     const parentLocaleRewrite = parentRewrites?.find(
-      ({ originPath }) => getPathNameLocale(originPath) === lintel.locale
+      ({ originPath }) => getPathLocale(originPath) === lintel.locale
     )
 
     if (parentLocaleRewrite) {

@@ -1,6 +1,6 @@
 import { Config } from '../types'
 import path from 'path'
-import { isDirectory, isFile } from '../utils'
+import { isDirectory, isFile } from './utils/fileUtils'
 
 // TODO: make this configurable by args
 const configPath = 'lintel.config.js'

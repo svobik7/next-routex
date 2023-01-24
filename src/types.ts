@@ -28,11 +28,11 @@ export type ConfigRuleLintel = {
 }
 
 export type PathName = `/${string}`
+export type PathSegment = string
 
 export type Rewrite = {
   originPath: PathName
   lintelPath: PathName
-  noRoute?: boolean
 }
 
 export type Route = {

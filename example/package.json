@@ -6,23 +6,23 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "lintels": "node ../dist/bin/index.js",
-    "dev": "yarn root && next dev",
-    "build": "yarn root && next build",
+    "lintel": "node ../dist/bin/cli.js",
+    "dev": "yarn lintel build && next dev",
+    "build": "yarn lintel build && next build",
     "start": "next start",
-    "analyze": "yarn root && cross-env ANALYZE=true next build",
-    "analyze:server": "yarn root && cross-env BUNDLE_ANALYZE=server next build",
-    "analyze:browser": "yarn root && cross-env BUNDLE_ANALYZE=browser next build"
+    "analyze": "yarn lintel build && cross-env ANALYZE=true next build",
+    "analyze:server": "yarn lintel build && cross-env BUNDLE_ANALYZE=server next build",
+    "analyze:browser": "yarn lintel build && cross-env BUNDLE_ANALYZE=browser next build"
   },
   "dependencies": {
-    "next": "^13.1.2",
+    "next": "^13.1.5",
+    "next-lintel": "link:../",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "next-roots": "link:../"
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@next/bundle-analyzer": "^13.1.2",
-    "@types/react": "link:../node_modules/@types/react",
+    "@next/bundle-analyzer": "^13.1.5",
+    "@types/react": "^18.0.27",
     "cross-env": "^7.0.2"
   }
 }

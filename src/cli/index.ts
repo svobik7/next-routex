@@ -21,11 +21,11 @@ const args = arg(commonArgs, {
 export type CliCommand = (argv?: string[]) => void
 
 const commands = {
-  generate: () => import('./commands/generate').then((i) => i.generate),
+  build: () => import('./commands/build').then((i) => i.build),
 }
 
 const aliases: Record<string, keyof typeof commands> = {
-  g: 'generate',
+  b: 'build',
 }
 
 type Command = keyof typeof commands

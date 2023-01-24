@@ -1,7 +1,7 @@
 import type { File, ConfigRule, Rewrite } from '../../types'
 import { getFiles } from './getFiles'
 
-function stringifyRewrite(input: File): string {
+function stringify(input: File): string {
   return `source:${input.source}|from:${input.from}|to:${input.to}`
 }
 
@@ -35,12 +35,10 @@ const inputRewrites: Rewrite[] = [
   {
     originPath: '/cs/(auth)',
     lintelPath: '/cs/(auth)',
-    noRoute: true,
   },
   {
     originPath: '/es/(auth)',
     lintelPath: '/es/(auth)',
-    noRoute: true,
   },
   {
     originPath: '/cs/(auth)/login',
@@ -185,8 +183,8 @@ const expectedFiles: File[] = [
 ]
 
 test('should create routing rewrites', () => {
-  const fileRewrites = getFiles(inputRewrites)
-  expect(fileRewrites.map(stringifyRewrite).sort()).toEqual(
-    expectedFiles.map(stringifyRewrite).sort()
+  const files = getFiles(inputRewrites)
+  expect(files.map(stringify).sort()).toEqual(
+    expectedFiles.map(stringify).sort()
   )
 })

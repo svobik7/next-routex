@@ -1,11 +1,14 @@
 import type { Config, File } from '../../types'
-import { copyDir, isDirectory, moveDir, removeDir } from '../../utils'
+import { copyDir, isDirectory, moveDir, removeDir } from '../utils/fileUtils'
 import { getConfigUtils } from '../config'
+import { getRewrites } from '../parsers/getRewrites'
+import { getFiles } from '../parsers/getFiles'
 
-import { getFiles } from './getFiles'
-import { getRewrites } from './getRewrites'
+function queue<T>(...fns: Array<(arg: T) => void>) {
+  return (input: T) => fns.map((fn) => fn(input))
+}
 
-function clearAll(config: Config) {
+function clearLocales(config: Config) {
   const { getOriginLocale, getLocalePath } = getConfigUtils(config)
   const originLocale = getOriginLocale()
 
@@ -15,7 +18,7 @@ function clearAll(config: Config) {
   config.locales.map(deleteLocale)
 }
 
-function createAll(config: Config) {
+function createLocales(config: Config) {
   const { getOriginLocale, getLocalePath, getOriginPath } =
     getConfigUtils(config)
 
@@ -28,8 +31,11 @@ function createAll(config: Config) {
   config.locales.map(createLocale)
 }
 
-function rewriteAll(config: Config, files: File[]) {
+function rewriteLocales(config: Config) {
   const { getLocalePath } = getConfigUtils(config)
+
+  const rewrites = getRewrites(config)
+  const files = getFiles(rewrites)
 
   const moveFile = (file: File) => {
     const fromPath = getLocalePath(file.from)
@@ -44,16 +50,9 @@ function rewriteAll(config: Config, files: File[]) {
   files.map(moveFile)
 }
 
-export function createStructure(config: Config) {
-  const rewrites = getRewrites(config)
-  const files = getFiles(rewrites)
+export function buildStructure(config: Config) {
+  console.log('\x1b[33mnext-lintel', '\x1b[37m- building localized routes ...')
 
-  console.log('\x1b[33mnext-roots', '\x1b[37m- clearing localized routes ...')
-  clearAll(config)
-
-  console.log('\x1b[33mnext-roots', '\x1b[37m- generating localized routes ...')
-  createAll(config)
-
-  console.log('\x1b[33mnext-roots', '\x1b[37m- rewriting localized routes ...')
-  rewriteAll(config, files)
+  const build = queue(clearLocales, createLocales, rewriteLocales)
+  build(config)
 }

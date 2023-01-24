@@ -10,11 +10,11 @@
     "index.js"
   ],
   "bin": {
-    "next-lintel": "./dist/bin/index.js"
+    "lintel": "./dist/bin/cli.js"
   },
   "scripts": {
     "prepublish": "yarn clean && yarn build && yarn test",
-    "build:bin": "yarn esbuild ./src/cli/index.ts --bundle --outfile=./dist/bin/index.js --platform=node",
+    "build:bin": "yarn esbuild ./src/cli/index.ts --bundle --outfile=./dist/bin/cli.js --platform=node",
     "build": "yarn build:bin",
     "clean": "rm -rf dist > /dev/null",
     "format": "pretty-quick",

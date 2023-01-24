@@ -1,10 +1,8 @@
 import type { ConfigRule, Rewrite } from '../../types'
 import { getRewrites } from './getRewrites'
 
-function stringifyRewrite(input: Rewrite) {
-  return `${input.originPath}:${input.lintelPath}:${
-    input.noRoute ? 'noRoute' : 'route'
-  }`
+function stringify(input: Rewrite) {
+  return `${input.originPath}:${input.lintelPath}`
 }
 
 const inputLocales = ['cs', 'es']
@@ -118,12 +116,10 @@ const expectedRewrites: Rewrite[] = [
   {
     originPath: '/cs/(auth)',
     lintelPath: '/cs/(auth)',
-    noRoute: true,
   },
   {
     originPath: '/es/(auth)',
     lintelPath: '/es/(auth)',
-    noRoute: true,
   },
   {
     originPath: '/cs/(auth)/login',
@@ -169,7 +165,7 @@ test('should create routing rewrites', () => {
     rules: inputRules,
     locales: inputLocales,
   })
-  expect(rewrites.map(stringifyRewrite).sort()).toEqual(
-    expectedRewrites.map(stringifyRewrite).sort()
+  expect(rewrites.map(stringify).sort()).toEqual(
+    expectedRewrites.map(stringify).sort()
   )
 })

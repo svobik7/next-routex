@@ -1,6 +1,6 @@
 import path from 'path'
 import { File, Rewrite } from '../../types'
-import { createPathName, getPathNameDepth } from '../../utils'
+import { getPathDepth, getPathName } from '../utils/pathUtils'
 
 export function getFiles(rewrites: Rewrite[]): File[] {
   const parentMatcher = ({ lintelPath }: Rewrite) => {
@@ -14,7 +14,7 @@ export function getFiles(rewrites: Rewrite[]): File[] {
 
     const file = {
       source: rewrite.originPath,
-      from: createPathName(
+      from: getPathName(
         parentFile
           ? rewrite.originPath.replace(parentFile.source, parentFile.to)
           : rewrite.originPath
@@ -26,8 +26,7 @@ export function getFiles(rewrites: Rewrite[]): File[] {
   }
 
   const sortedRewrites = rewrites.sort(
-    ({ originPath: a }, { originPath: b }) =>
-      getPathNameDepth(a) - getPathNameDepth(b)
+    ({ originPath: a }, { originPath: b }) => getPathDepth(a) - getPathDepth(b)
   )
 
   return sortedRewrites.reduce(toFile, [] as File[])
