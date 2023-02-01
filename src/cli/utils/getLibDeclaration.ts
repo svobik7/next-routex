@@ -93,7 +93,7 @@ export type RouterOptions = {
 }  
 
 export class Router {
-  constructor(schema: Schema, options: RouterOptions = {})
+  constructor(schema: Schema, options?: RouterOptions)
   
   getHref<T extends RouteNameDynamic>(name: T, params: RouteParamsDynamic<T>): string
   getHref<T extends RouteNameStatic>(name: T): string
