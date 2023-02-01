@@ -21,35 +21,35 @@ const args = arg(commonArgs, {
 export type CliCommand = (argv?: string[]) => void
 
 const commands = {
-  build: () => import('./commands/build').then((i) => i.build),
+  generate: () => import('./commands/generate').then((i) => i.generate),
 }
 
 const aliases: Record<string, keyof typeof commands> = {
-  b: 'build',
+  g: 'generate',
 }
 
 type Command = keyof typeof commands
 type Alias = keyof typeof aliases
 
-let lintelCommand: Command | undefined
+let routexCommand: Command | undefined
 
 if (commands[args._[0] as Command]) {
-  lintelCommand = args._[0] as Command
+  routexCommand = args._[0] as Command
 }
 
 if (aliases[args._[0] as Alias]) {
-  lintelCommand = aliases[args._[0] as Alias]
+  routexCommand = aliases[args._[0] as Alias]
 }
 
-const forwardedArgs = lintelCommand ? args._.slice(1) : args._
+const forwardedArgs = routexCommand ? args._.slice(1) : args._
 
 async function main() {
   // Make sure commands gracefully respect termination signals (e.g. from Docker)
   process.on('SIGTERM', () => process.exit(0))
   process.on('SIGINT', () => process.exit(0))
 
-  if (lintelCommand) {
-    const commandFn = commands[lintelCommand]
+  if (routexCommand) {
+    const commandFn = commands[routexCommand]
     commandFn?.()
       .then((exec: any) => exec(forwardedArgs))
       .then(() => {

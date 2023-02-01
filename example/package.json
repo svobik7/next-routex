@@ -1,22 +1,22 @@
 {
-  "name": "next-roots-example",
+  "name": "next-routex-example",
   "version": "1.0.0",
-  "description": "Example of using next-roots package",
+  "description": "Example of using next-routex package",
   "author": "Jirka Svoboda",
   "license": "MIT",
   "private": true,
   "scripts": {
-    "lintel": "node ../dist/bin/cli.js",
-    "dev": "yarn lintel build && next dev",
-    "build": "yarn lintel build && next build",
+    "routex": "node ../dist/cli.js generate",
+    "dev": "yarn routex && next dev",
+    "build": "yarn routex && next build",
     "start": "next start",
-    "analyze": "yarn lintel build && cross-env ANALYZE=true next build",
-    "analyze:server": "yarn lintel build && cross-env BUNDLE_ANALYZE=server next build",
-    "analyze:browser": "yarn lintel build && cross-env BUNDLE_ANALYZE=browser next build"
+    "analyze": "yarn routex && cross-env ANALYZE=true next build",
+    "analyze:server": "yarn routex && cross-env BUNDLE_ANALYZE=server next build",
+    "analyze:browser": "yarn routex && cross-env BUNDLE_ANALYZE=browser next build"
   },
   "dependencies": {
     "next": "^13.1.5",
-    "next-lintel": "link:../",
+    "next-routex": "link:../",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },

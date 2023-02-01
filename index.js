@@ -1,1 +1,4 @@
-module.exports = require('./dist/index')
+module.exports = {
+  ...require('.next-routex/index'),
+  ...require('./dist/index'),
+}

@@ -1,4 +1,4 @@
-# next-lintel
+# next-routex
 
 Next.js utility to generate internationalized (i18n) pages according to custom roots rules and with **no need to use Vercel dev server, Rewrites neither Routes**. The package has zero dependencies.
 

@@ -1,1 +1,1 @@
-export * as NextLintel from './types'
+export * from './router/router'

@@ -1,4 +1,3 @@
-import { isArticle, isAuthor } from '~/models'
 import dynamic from 'next/dynamic'
 import styles from './Article.module.css'
 
@@ -16,11 +15,6 @@ export function Article(props: ArticleProps) {
     data: { author, article },
   } = props
 
-  // show 404 when article either author is not found
-  if (!isFound(props.data)) {
-    return <NotFound />
-  }
-
   return (
     <div className={styles.root}>
       Article
@@ -32,12 +26,4 @@ export function Article(props: ArticleProps) {
       })}
     </div>
   )
-}
-
-/**
- * Determines if props.data is valid to show or not
- * @param data
- */
-function isFound(data: ArticleProps['data']) {
-  return isAuthor(data.author) && isArticle(data.article)
 }

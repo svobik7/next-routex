@@ -1,21 +1,21 @@
-import { Config } from '../types'
 import path from 'path'
-import { isDirectory, isFile } from './utils/fileUtils'
+import type { Config } from '~/cli/types'
+import { isDirectory } from '~/utils/fileUtils'
 
 // TODO: make this configurable by args
-const configPath = 'lintel.config.js'
+const configPath = 'routex.config.js'
 
 function getLocalesFactory(config: Config) {
   return () => config.locales
 }
 
 function getAppDirFactory(config: Config) {
-  const factory = getOriginPathFactory(config)
+  const factory = getRootPathFactory(config)
   return () => path.dirname(factory())
 }
 
-function getOriginPathFactory(config: Config) {
-  return () => path.join(process.cwd(), config.origin)
+function getRootPathFactory(config: Config) {
+  return () => path.join(process.cwd(), config.rootDir)
 }
 
 function getLocalePathFactory(config: Config) {
@@ -24,14 +24,14 @@ function getLocalePathFactory(config: Config) {
 }
 
 function getDefaultLocaleFactory(config: Config) {
-  const factory = getOriginPathFactory(config)
+  const factory = getRootPathFactory(config)
   return () => path.basename(factory())
 }
 
 export function getConfig() {
   // create final config
   const cfgDefault: Config = {
-    origin: './app/en',
+    rootDir: './app/en',
     locales: [],
     rules: [],
   }
@@ -40,10 +40,10 @@ export function getConfig() {
   const cfgRuntime = require(path.join(process.cwd(), configPath))
   const config: Config = { ...cfgDefault, ...cfgRuntime }
 
-  const getOriginPath = getOriginPathFactory(config)
+  const getRootPath = getRootPathFactory(config)
 
-  if (!isDirectory(getOriginPath())) {
-    throw new Error('Origin is not valid path')
+  if (!isDirectory(getRootPath())) {
+    throw new Error('Root path is not valid path')
   }
 
   return Object.freeze(config)
@@ -52,8 +52,8 @@ export function getConfig() {
 export function getConfigUtils(config: Config) {
   return {
     getAppDir: getAppDirFactory(config),
-    getOriginPath: getOriginPathFactory(config),
-    getOriginLocale: getDefaultLocaleFactory(config),
+    getRootPath: getRootPathFactory(config),
+    getRootLocale: getDefaultLocaleFactory(config),
     getLocalePath: getLocalePathFactory(config),
     getLocales: getLocalesFactory(config),
   }
