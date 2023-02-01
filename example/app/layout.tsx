@@ -6,8 +6,7 @@ export default async function RootLayout({
 }: {
   children: ReactNode
 }) {
-  const currentLocale = router.getCurrentLocale()
-  const title = `[${currentLocale}] NextRoutex for Next.js 13`
+  const title = `[${router.getCurrentLocale()}] NextRoutex for Next.js 13`
 
   return (
     <html>

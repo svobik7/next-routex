@@ -59,6 +59,6 @@ function rewriteRoutes(config: Config) {
 }
 
 export function generateFileRoutes(config: Config) {
-  console.log('\x1b[33mnext-routex', '\x1b[37m- generating file routes ...')
+  console.info('\x1b[33mnext-routex', '\x1b[37m- generating file routes ...')
   queue(clearRoutes, createRoutes, rewriteRoutes)(config)
 }

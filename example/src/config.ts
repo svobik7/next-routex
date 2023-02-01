@@ -1,6 +1,3 @@
-import { headers } from 'next/headers'
-import { schema, Routex } from 'node_modules/next-routex'
+import { Router, schema } from 'next-routex'
 
-export const router = new Routex(schema, {
-  currentLocale: headers().get('NEXT_ROUTEX_LOCALE') || '',
-})
+export const router = new Router(schema)

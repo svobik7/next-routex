@@ -7,8 +7,7 @@ function getSchema(schema: Schema) {
 const replacements = new Map([['{{schema}}', getSchema]])
 
 const template = `
-const schema = {{schema}}
-module.exports = { schema }
+module.exports = {{schema}}
 `
 
 export function getLibCode(schema: Schema): string {

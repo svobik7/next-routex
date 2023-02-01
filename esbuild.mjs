@@ -6,7 +6,7 @@ build({
   outdir: './dist',
   entryNames: '[name]',
   bundle: true,
-  minify: true,
+  // minify: true,
   treeShaking: true,
   platform: 'node',
   format: 'cjs',

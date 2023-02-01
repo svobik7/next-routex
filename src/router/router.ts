@@ -12,11 +12,11 @@ type RouterOptions = {
 }
 
 export class Router {
-  private routingTable: Schema
+  private schema: Schema
   private options: RouterOptions
 
-  constructor(routingTable: Schema, options: RouterOptions = {}) {
-    this.routingTable = routingTable
+  constructor(schema: Schema, options: RouterOptions = {}) {
+    this.schema = schema
     this.options = options
   }
 
@@ -29,7 +29,7 @@ export class Router {
   }
 
   public getDefaultLocale() {
-    return Object.keys(this.routingTable).at(0) || ''
+    return Object.keys(this.schema).at(0) || ''
   }
 
   public getHref(name: string, params: Record<string, string> = {}): string {
@@ -46,7 +46,7 @@ export class Router {
   }
 
   private getRoutes(locale: string) {
-    return locale in this.routingTable ? this.routingTable[locale] : []
+    return locale in this.schema ? this.schema[locale] : []
   }
 
   private findRouteByLocaleAndName(locale: string, name: string) {
@@ -76,7 +76,7 @@ export class Router {
     const rootLessHref = href.startsWith('/') ? href.slice(1) : href
     const [locale, ...routeHrefSegments] = rootLessHref.split('/')
 
-    if (locale in this.routingTable) {
+    if (locale in this.schema) {
       return { locale, routeHref: this.formatHref(...routeHrefSegments) }
     }
 
@@ -89,6 +89,6 @@ export class Router {
   }
 
   private isValidLocale(locale: string) {
-    return Object.keys(this.routingTable).includes(locale)
+    return Object.keys(this.schema).includes(locale)
   }
 }
