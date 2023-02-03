@@ -1,4 +1,14 @@
-import fs from 'fs-extra'
+import {
+  copyFileSync,
+  existsSync,
+  mkdirSync,
+  moveSync,
+  readdirSync,
+  readFileSync,
+  removeSync,
+  statSync,
+  writeFileSync,
+} from 'fs-extra'
 import path from 'path'
 
 /**
@@ -6,7 +16,7 @@ import path from 'path'
  */
 export function writeFile(filePath: string, content: string): void {
   makeDir(filePath)
-  fs.writeFileSync(filePath, content)
+  writeFileSync(filePath, content)
 }
 
 /**
@@ -18,7 +28,7 @@ export function readFile(
   encoding: BufferEncoding = 'utf8'
 ): string {
   if (!isFile(path)) return ''
-  return fs.readFileSync(path).toString(encoding)
+  return readFileSync(path).toString(encoding)
 }
 
 /**
@@ -27,7 +37,7 @@ export function readFile(
 export function copyFile(from: string, to: string): void {
   if (from !== to) {
     makeDir(to)
-    fs.copyFileSync(from, to)
+    copyFileSync(from, to)
   }
 }
 
@@ -35,16 +45,16 @@ export function copyFile(from: string, to: string): void {
  * Removes given directory recursively
  */
 export function removeFile(dirPath: string): void {
-  if (!fs.existsSync(dirPath)) return
-  fs.removeSync(dirPath)
+  if (!existsSync(dirPath)) return
+  removeSync(dirPath)
 }
 
 /**
  * Indicates if filePath is file
  */
 export function isFile(filePath: string): boolean {
-  if (!fs.existsSync(filePath)) return false
-  return fs.statSync(filePath).isFile()
+  if (!existsSync(filePath)) return false
+  return statSync(filePath).isFile()
 }
 
 /**
@@ -52,7 +62,7 @@ export function isFile(filePath: string): boolean {
  */
 export function moveDir(from: string, to: string): void {
   if (from !== to && isDirectory(from)) {
-    fs.moveSync(from, to)
+    moveSync(from, to)
   }
 }
 
@@ -63,7 +73,7 @@ export function copyDir(from: string, to: string): void {
   if (from !== to && isDirectory(from)) {
     makeDir(to)
 
-    const files = fs.readdirSync(from)
+    const files = readdirSync(from)
 
     files.forEach((currentPath: string) => {
       const currentFrom = path.join(from, currentPath)
@@ -82,8 +92,8 @@ export function copyDir(from: string, to: string): void {
 export function makeDir(dirPath: string): void {
   dirPath = path.dirname(dirPath)
 
-  if (!fs.existsSync(dirPath)) {
-    fs.mkdirSync(dirPath, { recursive: true })
+  if (!existsSync(dirPath)) {
+    mkdirSync(dirPath, { recursive: true })
   }
 }
 
@@ -91,8 +101,8 @@ export function makeDir(dirPath: string): void {
  * Indicates if dirPath is directory
  */
 export function isDirectory(dirPath: string): boolean {
-  if (!fs.existsSync(dirPath)) return false
-  return fs.statSync(dirPath).isDirectory()
+  if (!existsSync(dirPath)) return false
+  return statSync(dirPath).isDirectory()
 }
 
 /**

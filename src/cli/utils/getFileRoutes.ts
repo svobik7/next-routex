@@ -1,6 +1,6 @@
 import type { ConfigRule, ConfigRuleRoute, FileRoute } from '~/cli/types'
+import { asPathName, getPathLocale } from '~/utils/pathUtils'
 import { getRuleRoutes, isParentRule } from '~/utils/ruleUtils'
-import { getPathLocale, asPathName } from '~/utils/pathUtils'
 
 type CreateFileRouteOptions = {
   rule: ConfigRule

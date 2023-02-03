@@ -1,5 +1,7 @@
+/* eslint-disable @next/next/no-head-element */
 import type { PropsWithChildren } from 'react'
 import { getRouter } from '~/config/router'
+import { SelectLocale } from './SelectLocale/SeletLocale'
 
 import '~/styles.css'
 
@@ -10,7 +12,7 @@ export function Layout({ children }: LayoutProps) {
   const title = `NextRoutex [${router.getLocale()}]`
 
   return (
-    <html>
+    <html className="h-full">
       <head>
         <title>{title}</title>
         <meta
@@ -18,7 +20,10 @@ export function Layout({ children }: LayoutProps) {
           content="Example of using next-routex to handle i18n routing in Next.js app folder."
         />
       </head>
-      <body className="bg-slate-900 text-slate-400">{children}</body>
+      <body className="mx-auto flex h-full max-w-md flex-1 flex-col items-center justify-center bg-slate-900 text-slate-400">
+        <SelectLocale />
+        {children}
+      </body>
     </html>
   )
 }

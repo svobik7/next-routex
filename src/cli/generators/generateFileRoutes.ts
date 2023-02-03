@@ -1,9 +1,9 @@
 import { getConfigUtils } from '~/cli/config'
 import type { Config, FileRewrite } from '~/cli/types'
-import { copyDir, isDirectory, moveDir, removeFile } from '~/utils/fileUtils'
 import { queue } from '~/utils/baseUtils'
-import { getFileRoutes } from '../utils/getFileRoutes'
+import { copyDir, isDirectory, moveDir, removeFile } from '~/utils/fileUtils'
 import { getFileRewrites } from '../utils/getFileRewrites'
+import { getFileRoutes } from '../utils/getFileRoutes'
 
 /**
  * Removes all localized file routes but root
@@ -59,6 +59,7 @@ function rewriteRoutes(config: Config) {
 }
 
 export function generateFileRoutes(config: Config) {
-  console.info('\x1b[33mnext-routex', '\x1b[37m- generating file routes ...')
+  // eslint-disable-next-line no-console
+  console.log('\x1b[33mnext-routex', '\x1b[37m- generating file routes ...')
   queue(clearRoutes, createRoutes, rewriteRoutes)(config)
 }

@@ -1,5 +1,4 @@
-import type { Key } from 'path-to-regexp';
-import { pathToRegexp } from 'path-to-regexp'
+import { type Key, pathToRegexp } from 'path-to-regexp'
 import type { Route, Schema } from '~/types'
 
 function not<T>(fn: (input: T) => boolean) {

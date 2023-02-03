@@ -1,4 +1,4 @@
-import type { FileRoute, FileRewrite } from '~/cli/types'
+import type { FileRewrite, FileRoute } from '~/cli/types'
 import { getFileRewrites } from './getFileRewrites'
 
 function stringify(input: FileRewrite): string {
