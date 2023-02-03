@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-const arg = require('arg')
+import arg from 'arg'
 
 const commonArgs = {
   // Flags
@@ -51,7 +51,7 @@ async function main() {
   if (routexCommand) {
     const commandFn = commands[routexCommand]
     commandFn?.()
-      .then((exec: any) => exec(forwardedArgs))
+      .then((exec: CallableFunction) => exec(forwardedArgs))
       .then(() => {
         process.exit(0)
       })

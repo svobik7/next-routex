@@ -36,7 +36,7 @@ export function getConfig() {
     rules: [],
   }
 
-  // load runtime config
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const cfgRuntime = require(path.join(process.cwd(), configPath))
   const config: Config = { ...cfgDefault, ...cfgRuntime }
 

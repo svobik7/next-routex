@@ -7,25 +7,23 @@ type CompileHrefOptions = {
   params: Record<string, string>
 }
 
-type RouterOptions = {
-  currentLocale?: string
-}
-
 export class Router {
   private schema: Schema
-  private options: RouterOptions
+  private locale: string
 
-  constructor(schema: Schema, options: RouterOptions = {}) {
+  constructor(schema: Schema) {
     this.schema = schema
-    this.options = options
+    this.locale = this.getDefaultLocale()
   }
 
-  public getCurrentLocale() {
-    const currentLocale = this.options.currentLocale || ''
+  public getLocale() {
+    return this.locale
+  }
 
-    return this.isValidLocale(currentLocale)
-      ? currentLocale
-      : this.getDefaultLocale()
+  public setLocale(locale: string) {
+    if (this.isValidLocale(locale)) {
+      this.locale = locale
+    }
   }
 
   public getDefaultLocale() {
@@ -33,7 +31,7 @@ export class Router {
   }
 
   public getHref(name: string, params: Record<string, string> = {}): string {
-    const { locale = this.getCurrentLocale(), ...hrefParams } = params
+    const { locale = this.getLocale(), ...hrefParams } = params
     const route = this.findRouteByLocaleAndName(locale, name)
     return route
       ? this.compileHref({ locale, routeHref: route.href, params: hrefParams })

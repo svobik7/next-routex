@@ -1,4 +1,5 @@
-import { pathToRegexp, Key } from 'path-to-regexp'
+import type { Key } from 'path-to-regexp';
+import { pathToRegexp } from 'path-to-regexp'
 import type { Route, Schema } from '~/types'
 
 function not<T>(fn: (input: T) => boolean) {
@@ -88,12 +89,8 @@ export type Schema = { [P in RouteLocale]: Route[] }
 export type RouteParamsStatic<T extends object = {}> = T & { locale?: RouteLocale }
 export type RouteParamsDynamic<T extends RouteName> = {{routeParamsDynamic}}
 
-export type RouterOptions = {
-  currentLocale?: string
-}  
-
 export class Router {
-  constructor(schema: Schema, options?: RouterOptions)
+  constructor(schema: Schema)
   
   getHref<T extends RouteNameDynamic>(name: T, params: RouteParamsDynamic<T>): string
   getHref<T extends RouteNameStatic>(name: T): string
@@ -102,7 +99,8 @@ export class Router {
   getRoute(href: string): Route | undefined
   
   getDefaultLocale(): string
-  getCurrentLocale(): string
+  getLocale(): string
+  setLocale(locale: string): string
 }
 
 export const schema: Schema

@@ -13,11 +13,12 @@
     "routex": "./dist/cli.js"
   },
   "scripts": {
-    "prepublish": "yarn clean && yarn build && yarn test",
+    "prepublish": "yarn clean && yarn test && yarn build",
     "build": "yarn clean && yarn check:types && node esbuild.mjs",
     "clean": "rm -rf dist > /dev/null",
     "format": "pretty-quick",
     "test": "jest",
+    "lint": "eslint --ext .js,.ts,.tsx src/",
     "test:coverage": "jest --coverage",
     "test:watch": "jest --watch",
     "publish:canary": "yarn publish --tag canary",
@@ -27,27 +28,28 @@
   "devDependencies": {
     "@types/fs-extra": "^11.0.1",
     "@types/jest": "^29.2.6",
+    "@typescript-eslint/eslint-plugin": "^5.50.0",
+    "@typescript-eslint/parser": "^5.50.0",
     "arg": "^5.0.2",
     "colors": "^1.4.0",
-    "esbuild": "^0.17.3",
+    "esbuild": "^0.17.5",
     "esbuild-jest": "^0.5.0",
     "esbuild-node-externals": "^1.6.0",
+    "eslint": "^8.33.0",
+    "eslint-config-prettier": "^8.6.0",
+    "eslint-plugin-prettier": "^4.2.1",
     "fs-extra": "^11.1.0",
     "husky": "^8.0.3",
     "jest": "^29.3.1",
+    "lint-staged": "^13.1.0",
     "path-to-regexp": "^6.2.1",
     "prettier": "^2.8.3",
     "pretty-quick": "^3.1.3",
     "resolve-pkg": "^2.0.0",
-    "typescript": "^4.9.4"
+    "typescript": "^4.9.5"
   },
   "peerDependencies": {
     "path-to-regexp": "^6.2.1"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "pretty-quick --staged && yarn test"
-    }
   },
   "license": "MIT",
   "keywords": [
@@ -69,5 +71,10 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/svobik7/next-routex"
+  },
+  "lint-staged": {
+    "*.{js,ts,tsx}": [
+      "eslint --fix"
+    ]
   }
 }

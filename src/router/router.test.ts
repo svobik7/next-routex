@@ -29,14 +29,15 @@ describe('getDefaultLocale', () => {
   expect(router.getDefaultLocale()).toBe('cs')
 })
 
-describe('getCurrentLocale', () => {
+describe('getLocale', () => {
   const router = new Router(inputSchema)
-  expect(router.getCurrentLocale()).toBe('cs')
-})
+  expect(router.getLocale()).toBe('cs')
 
-describe('getCurrentLocale with explicitly set', () => {
-  const router = new Router(inputSchema, { currentLocale: 'es' })
-  expect(router.getCurrentLocale()).toBe('es')
+  router.setLocale('es')
+  expect(router.getLocale()).toBe('es')
+
+  router.setLocale('not-existing')
+  expect(router.getLocale()).toBe('es')
 })
 
 describe('getHref', () => {
@@ -68,8 +69,9 @@ describe('getHref', () => {
   )
 })
 
-describe('getHref with valid currentLocale option', () => {
-  const router = new Router(inputSchema, { currentLocale: 'es' })
+describe('getHref with explicitly changed locale', () => {
+  const router = new Router(inputSchema)
+  router.setLocale('es')
 
   const testCases = [['/(auth)/login', undefined, '/es/acceso']] as const
 
@@ -82,8 +84,9 @@ describe('getHref with valid currentLocale option', () => {
   )
 })
 
-describe('getHref with invalid currentLocale option', () => {
-  const router = new Router(inputSchema, { currentLocale: 'xs' })
+describe('getHref with invalid locale passed to setLocale', () => {
+  const router = new Router(inputSchema)
+  router.setLocale('not-existing-locale')
 
   const testCases = [['/(auth)/login', undefined, '/cs/prihlaseni']] as const
 
@@ -97,7 +100,7 @@ describe('getHref with invalid currentLocale option', () => {
 })
 
 describe('getRoute', () => {
-  const router = new Router(inputSchema, { currentLocale: 'es' })
+  const router = new Router(inputSchema)
 
   const testCases = [
     ['/cs/prihlaseni', { name: '/(auth)/login', href: '/prihlaseni' }],

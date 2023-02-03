@@ -1,11 +1,11 @@
 import type { Config } from '~/cli/types'
-import { getFilePath, removeFile, writeFile } from '~/utils/fileUtils'
+import { getFilePath, writeFile } from '~/utils/fileUtils'
 import { getFileRoutes } from '../utils/getFileRoutes'
 import { getLibCode } from '../utils/getLibCode'
 import { getLibDeclaration } from '../utils/getLibDeclaration'
 import { getSchema } from '../utils/getSchema'
 
-const resolvePkg = require('resolve-pkg')
+import resolvePkg from 'resolve-pkg'
 // should be loaded automatically from package json
 const PKG_NAME = 'next-routex'
 

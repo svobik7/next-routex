@@ -14,6 +14,7 @@
     "module": "ESNext",
     "moduleResolution": "node",
     "importsNotUsedAsValues": "error",
+    "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "paths": {
       "~/*": ["src/*"]
