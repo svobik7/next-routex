@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 export function middleware(request: NextRequest) {
-  const locale = request.nextUrl.pathname.split('/').at(0) || ''
+  const [, locale = 'en'] = request.nextUrl.pathname.split('/')
 
   return NextResponse.next({
     request: {

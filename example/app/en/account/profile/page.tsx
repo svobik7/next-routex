@@ -1,1 +1,1 @@
-export { AccountProfile as default } from '~/components/AccountProfile/AccountProfile'
+export { AccountProfile as default } from '~/components/AccountProfile'

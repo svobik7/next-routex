@@ -1,19 +1,19 @@
 import Link from 'next/link'
-import { getCurrentLocale, getHref } from '~/router'
-import { Footer } from '../Footer/Footer'
-import { Header } from '../Header/Header'
-import styles from './Account.module.css'
+import { getRouter } from '~/config/router'
+import { Footer } from './Footer'
+import { Header } from './Header'
 
 export async function Account() {
-  const currentLocale = getCurrentLocale()
+  const router = getRouter()
+  const currentLocale = router.getLocale()
   return (
-    <div className={styles.root}>
+    <div className="">
       <Header />
       Account - {currentLocale}
       <ul>
         <li>
           <Link
-            href={getHref('/blog/articles/[articleId]', {
+            href={router.getHref('/blog/articles/[articleId]', {
               articleId: '3',
               locale: 'cs',
             })}
@@ -23,7 +23,7 @@ export async function Account() {
         </li>
         <li>
           <Link
-            href={getHref('/blog/articles/[articleId]', {
+            href={router.getHref('/blog/articles/[articleId]', {
               articleId: '3',
             })}
           >
@@ -31,32 +31,40 @@ export async function Account() {
           </Link>
         </li>
         <li>
-          <Link href={getHref('/account', { locale: 'cs' })}>EN Account</Link>
+          <Link href={router.getHref('/account', { locale: 'cs' })}>
+            EN Account
+          </Link>
         </li>
         <li>
-          <Link href={getHref('/account/profile', { locale: 'en' })}>
+          <Link href={router.getHref('/account/profile', { locale: 'en' })}>
             CS Account Profile
           </Link>
         </li>
         <li>
-          <Link href={getHref('/account/profile')}>EN Account</Link>
+          <Link href={router.getHref('/account/profile')}>EN Account</Link>
         </li>
         <li>
           <Link
-            href={getHref('/blog/articles/[articleId]', { articleId: '1' })}
+            href={router.getHref('/blog/articles/[articleId]', {
+              articleId: '1',
+            })}
           >
             CS Article Detail
           </Link>
         </li>
         <li>
           <Link
-            href={getHref('/blog/articles/[articleId]', { articleId: '1' })}
+            href={router.getHref('/blog/articles/[articleId]', {
+              articleId: '1',
+            })}
           >
             EN Article Detail
           </Link>
         </li>
         <li>
-          <Link href={getHref('/blog/authors/[authorId]', { authorId: '1' })}>
+          <Link
+            href={router.getHref('/blog/authors/[authorId]', { authorId: '1' })}
+          >
             EN Authors Detail
           </Link>
         </li>

@@ -1,8 +1,3 @@
-import dynamic from 'next/dynamic'
-import styles from './Author.module.css'
-
-const NotFound = dynamic(() => import('../NotFound/NotFound'))
-
 type DetailAuthorProps = {
   data: {
     author: unknown
@@ -15,7 +10,7 @@ export function Author(props: DetailAuthorProps) {
   } = props
 
   return (
-    <div className={styles.root}>
+    <div className="">
       Author
       <br />
       <br />

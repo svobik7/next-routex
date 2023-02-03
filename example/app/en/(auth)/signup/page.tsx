@@ -1,1 +1,1 @@
-export { AuthSignUp as default } from '~/components/AuthSignUp/AuthSignUp'
+export { AuthSignUp as default } from '~/components/AuthSignUp'

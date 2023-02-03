@@ -1,8 +1,3 @@
-import dynamic from 'next/dynamic'
-import styles from './Article.module.css'
-
-const NotFound = dynamic(() => import('../NotFound/NotFound'))
-
 type ArticleProps = {
   data: {
     author: unknown
@@ -16,7 +11,7 @@ export function Article(props: ArticleProps) {
   } = props
 
   return (
-    <div className={styles.root}>
+    <div className="">
       Article
       <br />
       <br />
