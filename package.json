@@ -1,5 +1,5 @@
 {
-  "name": "next-routex",
+  "name": "next-roots",
   "version": "0.0.1",
   "description": "Utility to handle internationalized routing for Next.js app folder.",
   "main": "dist/index.js",
@@ -10,7 +10,7 @@
     "index.js"
   ],
   "bin": {
-    "routex": "./dist/cli.js"
+    "roots": "./dist/cli.js"
   },
   "scripts": {
     "prepare": "husky install",
@@ -75,7 +75,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/svobik7/next-routex"
+    "url": "https://github.com/svobik7/next-roots"
   },
   "lint-staged": {
     "*.{js,ts,tsx}": [

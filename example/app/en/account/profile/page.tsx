@@ -1,1 +1,1 @@
-export { AccountProfile as default } from '~/components/AccountProfile'
+export { AccountProfilePage as default } from '~/ui/components/pages/AccountProfilePage'

@@ -1,5 +1,5 @@
-import { Article } from '~/components/Article'
+import { ArticlePage } from '~/ui/components/pages/ArticlePage'
 
 export default function ArticleDetail({ params }: any) {
-  return <Article data={{ author: params.id, article: params.id }} />
+  return <ArticlePage data={{ author: params.id, article: params.id }} />
 }

@@ -10,11 +10,11 @@ import { getFileRoutes } from '../utils/getFileRoutes'
  * @param config
  */
 function clearRoutes(config: Config) {
-  const { getRootLocale, getLocalePath } = getConfigUtils(config)
-  const rootLocale = getRootLocale()
+  const { getDefaultLocale, getLocalePath } = getConfigUtils(config)
+  const defaultLocale = getDefaultLocale()
 
   const deleteLocale = (locale: string) =>
-    locale !== rootLocale && removeFile(getLocalePath(locale))
+    locale !== defaultLocale && removeFile(getLocalePath(locale))
 
   config.locales.map(deleteLocale)
 }
@@ -24,13 +24,15 @@ function clearRoutes(config: Config) {
  * @param config
  */
 function createRoutes(config: Config) {
-  const { getRootLocale, getLocalePath, getRootPath } = getConfigUtils(config)
+  const { getDefaultLocale, getDefaultLocalePath, getLocalePath } =
+    getConfigUtils(config)
 
-  const rootLocale = getRootLocale()
-  const rootPath = getRootPath()
+  const defaultLocale = getDefaultLocale()
+  const defaultLocalePath = getDefaultLocalePath()
 
   const createLocale = (locale: string) =>
-    locale !== rootLocale && copyDir(rootPath, getLocalePath(locale))
+    locale !== defaultLocale &&
+    copyDir(defaultLocalePath, getLocalePath(locale))
 
   config.locales.map(createLocale)
 }
@@ -60,6 +62,6 @@ function rewriteRoutes(config: Config) {
 
 export function generateFileRoutes(config: Config) {
   // eslint-disable-next-line no-console
-  console.log('\x1b[33mnext-routex', '\x1b[37m- generating file routes ...')
+  console.log('\x1b[33mnext-roots', '\x1b[37m- generating file routes ...')
   queue(clearRoutes, createRoutes, rewriteRoutes)(config)
 }

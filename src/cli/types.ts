@@ -1,39 +1,38 @@
 export type Config = {
   rootDir: string
   locales: string[]
-  rules: ConfigRule[]
+  routes: ConfigRoute[]
 }
 
-export type ConfigRule =
-  | ConfigRuleParent
-  | ConfigRuleChild
-  | ConfigRuleGroup
-  | ConfigRuleDynamic
+export type ConfigRoute =
+  | ConfigRouteParent
+  | ConfigRouteChild
+  | ConfigRouteGroup
+  | ConfigRouteDynamic
 
-export type ConfigRuleChild = {
+export type ConfigRouteChild = {
   rootPath: string
-  routes: ConfigRuleRoute[]
+  translations: ConfigRouteTranslation[]
 }
 
-export type ConfigRuleParent = ConfigRuleChild & {
-  children: Array<ConfigRule>
+export type ConfigRouteParent = ConfigRouteChild & {
+  children: Array<ConfigRoute>
 }
 
-export type ConfigRuleGroup = Omit<ConfigRuleParent, 'routes'> & {
+export type ConfigRouteGroup = Omit<ConfigRouteParent, 'translations'> & {
   rootPath: `(${string})`
 }
 
-export type ConfigRuleDynamic = Omit<
-  ConfigRuleParent | ConfigRuleChild,
-  'routes'
+export type ConfigRouteDynamic = Omit<
+  ConfigRouteParent | ConfigRouteChild,
+  'translations'
 > & {
   rootPath: `[${string}]`
-  // regExp?: string
 }
 
-export type ConfigRuleRoute = {
+export type ConfigRouteTranslation = {
   locale: string
-  routePath: string
+  segment: string
 }
 
 export type FileRoute = {

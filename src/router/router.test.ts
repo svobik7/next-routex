@@ -1,43 +1,75 @@
 import type { Schema } from '~/types'
 import { Router } from './router'
 
-const inputSchema: Schema = {
-  cs: [
+const inputSchema: Schema = new Map([
+  [
+    'cs',
     {
-      name: '/(auth)/login',
-      href: '/prihlaseni',
-    },
-    {
-      name: '/blog/articles/[articleId]',
-      href: '/blog/clanky/:articleId',
-    },
-  ],
-  es: [
-    {
-      name: '/(auth)/login',
-      href: '/acceso',
-    },
-    {
-      name: '/blog/articles/[articleId]',
-      href: '/blog/articulos/:articleId',
+      locale: 'cs',
+      routes: [
+        {
+          name: '/(auth)/login',
+          href: '/prihlaseni',
+        },
+        {
+          name: '/blog/articles/[articleId]',
+          href: '/blog/clanky/:articleId',
+        },
+      ],
     },
   ],
-}
+  [
+    'es',
+    {
+      locale: 'es',
+      routes: [
+        {
+          name: '/(auth)/login',
+          href: '/acceso',
+        },
+        {
+          name: '/blog/articles/[articleId]',
+          href: '/blog/articulos/:articleId',
+        },
+      ],
+    },
+  ],
+])
 
-describe('getDefaultLocale', () => {
-  const router = new Router(inputSchema)
+test('getDefaultLocale without __default prop in schema', () => {
+  const schemaWithoutDefault = new Map([
+    ['cs', { locale: 'cs', routes: [] }],
+    ['es', { locale: 'es', routes: [] }],
+  ])
+  const router = new Router(schemaWithoutDefault)
   expect(router.getDefaultLocale()).toBe('cs')
 })
 
-describe('getLocale', () => {
+test('getDefaultLocale with __default prop in schema', () => {
+  const schemaWithDefault = new Map([
+    ['cs', { locale: 'cs', routes: [] }],
+    ['es', { locale: 'es', routes: [] }],
+    ['__default', { locale: 'es', routes: [] }],
+  ])
+  const router = new Router(schemaWithDefault)
+  expect(router.getDefaultLocale()).toBe('es')
+})
+
+test('getLocale equals default locale', () => {
   const router = new Router(inputSchema)
   expect(router.getLocale()).toBe('cs')
+})
 
+test('getLocale reflects change', () => {
+  const router = new Router(inputSchema)
   router.setLocale('es')
   expect(router.getLocale()).toBe('es')
+})
 
+test('getLocale ignores invalid change', () => {
+  const router = new Router(inputSchema)
   router.setLocale('not-existing')
-  expect(router.getLocale()).toBe('es')
+  expect(router.getLocale()).toBe('cs')
 })
 
 describe('getHref', () => {

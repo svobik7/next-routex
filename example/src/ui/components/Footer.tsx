@@ -7,7 +7,7 @@ export function Footer({ currentLocale }: FooterProps) {
   const onClick = () => setState(state + 1)
   return (
     <div>
-      THis is simple header server component - {currentLocale}
+      <p>THis is simple footer server component - {currentLocale}</p>
       <button onClick={onClick}>Click me {state}</button>
     </div>
   )

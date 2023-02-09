@@ -3,15 +3,18 @@ import type { Config } from '~/cli/types'
 import { isDirectory } from '~/utils/fileUtils'
 
 // TODO: make this configurable by args
-const configPath = 'routex.config.js'
+const configPath = 'roots.config.js'
 
-function getLocalesFactory(config: Config) {
-  return () => config.locales
-}
+function getDefaultLocaleFactory(config: Config) {
+  return () => {
+    const defaultLocale = config.locales.at(0)
 
-function getAppDirFactory(config: Config) {
-  const factory = getRootPathFactory(config)
-  return () => path.dirname(factory())
+    if (!defaultLocale) {
+      throw new Error('Default locale was not specified.')
+    }
+
+    return defaultLocale
+  }
 }
 
 function getRootPathFactory(config: Config) {
@@ -19,21 +22,24 @@ function getRootPathFactory(config: Config) {
 }
 
 function getLocalePathFactory(config: Config) {
-  const factory = getAppDirFactory(config)
-  return (locale: string) => path.join(factory(), locale)
+  const getRootPath = getRootPathFactory(config)
+  return (locale: string) => path.join(getRootPath(), locale)
 }
 
-function getDefaultLocaleFactory(config: Config) {
-  const factory = getRootPathFactory(config)
-  return () => path.basename(factory())
+function getDefaultLocalePathFactory(config: Config) {
+  const getDefaultLocale = getDefaultLocaleFactory(config)
+  const getRootPath = getRootPathFactory(config)
+  return () => {
+    return path.join(getRootPath(), getDefaultLocale())
+  }
 }
 
 export function getConfig() {
   // create final config
   const cfgDefault: Config = {
-    rootDir: './app/en',
+    rootDir: './app',
     locales: [],
-    rules: [],
+    routes: [],
   }
 
   // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -46,15 +52,20 @@ export function getConfig() {
     throw new Error('Root path is not valid path')
   }
 
+  const getDefaultLocalePath = getDefaultLocalePathFactory(config)
+
+  if (!isDirectory(getDefaultLocalePath())) {
+    throw new Error('Default locale path is not valid path')
+  }
+
   return Object.freeze(config)
 }
 
 export function getConfigUtils(config: Config) {
   return {
-    getAppDir: getAppDirFactory(config),
     getRootPath: getRootPathFactory(config),
-    getRootLocale: getDefaultLocaleFactory(config),
     getLocalePath: getLocalePathFactory(config),
-    getLocales: getLocalesFactory(config),
+    getDefaultLocalePath: getDefaultLocalePathFactory(config),
+    getDefaultLocale: getDefaultLocaleFactory(config),
   }
 }

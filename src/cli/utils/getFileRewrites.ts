@@ -12,9 +12,9 @@ export function getFileRewrites(fileRoutes: FileRoute[]): FileRewrite[] {
     return (fileRewrite: FileRewrite) => fileRewrite.to === expectedParentTo
   }
 
-  const toRewrite = (acc: FileRewrite[], fileRoute: FileRoute) => {
+  const toRewrite = (rewrites: FileRewrite[], fileRoute: FileRoute) => {
     const findParentRewrite = parentMatcher(fileRoute)
-    const parentRewrite = acc.find(findParentRewrite)
+    const parentRewrite = rewrites.find(findParentRewrite)
 
     const file = {
       source: fileRoute.rootPath,
@@ -26,7 +26,7 @@ export function getFileRewrites(fileRoutes: FileRoute[]): FileRewrite[] {
       to: fileRoute.routePath,
     }
 
-    return [...acc, file]
+    return [...rewrites, file]
   }
 
   return fileRoutes.sort(sortByDepth).reduce(toRewrite, [] as FileRewrite[])

@@ -1,11 +1,11 @@
-type ArticleProps = {
+type ArticlePageProps = {
   data: {
     author: unknown
     article: unknown
   }
 }
 
-export function Article(props: ArticleProps) {
+export function ArticlePage(props: ArticlePageProps) {
   const {
     data: { author, article },
   } = props

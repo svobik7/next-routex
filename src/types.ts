@@ -3,4 +3,5 @@ export type Route = {
   href: `/${string}`
 }
 
-export type Schema = Record<string, Route[]>
+export type SchemaRecord = { locale: string; routes: Route[] }
+export type Schema = Map<string | '__default', SchemaRecord>

@@ -1,10 +1,10 @@
-type DetailAuthorProps = {
+type AuthorPageProps = {
   data: {
     author: unknown
   }
 }
 
-export function Author(props: DetailAuthorProps) {
+export function AuthorPage(props: AuthorPageProps) {
   const {
     data: { author },
   } = props

@@ -1,17 +1,6 @@
-import type { Route, Schema } from '~/types'
+import type { Schema } from '~/types'
 import type { FileRoute } from '../types'
 import { getSchema } from './getSchema'
-
-function stringifyRoute(route: Route) {
-  return `${route.name}:${route.href}`
-}
-
-function stringifySchema(schema: Schema) {
-  const sortedLocales = Object.keys(schema).sort()
-  const sortedRecords = (locale: string) =>
-    schema[locale].map(stringifyRoute).sort()
-  return sortedLocales.map(sortedRecords)
-}
 
 const inputFileRoutes: FileRoute[] = [
   { rootPath: '/cs/account', routePath: '/cs/ucet' },
@@ -31,38 +20,50 @@ const inputFileRoutes: FileRoute[] = [
   },
 ]
 
-const expectedSchema: Schema = {
-  cs: [
+const expectedSchema: Schema = new Map([
+  [
+    'cs',
     {
-      name: '/account',
-      href: '/ucet',
-    },
-    {
-      name: '/(auth)/login',
-      href: '/prihlaseni',
-    },
-    {
-      name: '/blog/articles/[articleId]',
-      href: '/blog/clanky/:articleId',
-    },
-  ],
-  es: [
-    {
-      name: '/account',
-      href: '/cuenta',
-    },
-    {
-      name: '/(auth)/login',
-      href: '/acceso',
-    },
-    {
-      name: '/blog/articles/[articleId]',
-      href: '/blog/articulos/:articleId',
+      locale: 'cs',
+      routes: [
+        {
+          name: '/account',
+          href: '/ucet',
+        },
+        {
+          name: '/(auth)/login',
+          href: '/prihlaseni',
+        },
+        {
+          name: '/blog/articles/[articleId]',
+          href: '/blog/clanky/:articleId',
+        },
+      ],
     },
   ],
-}
+  [
+    'es',
+    {
+      locale: 'es',
+      routes: [
+        {
+          name: '/account',
+          href: '/cuenta',
+        },
+        {
+          name: '/(auth)/login',
+          href: '/acceso',
+        },
+        {
+          name: '/blog/articles/[articleId]',
+          href: '/blog/articulos/:articleId',
+        },
+      ],
+    },
+  ],
+])
 
-test('should create routing table', () => {
+test('should create schema', () => {
   const schema = getSchema(inputFileRoutes)
-  expect(stringifySchema(schema)).toEqual(stringifySchema(expectedSchema))
+  expect(schema).toEqual(expectedSchema)
 })

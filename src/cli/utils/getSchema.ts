@@ -21,20 +21,16 @@ function isGroupFileRoute(fileRoute: FileRoute) {
 }
 
 export function getSchema(fileRoutes: FileRoute[]): Schema {
-  const toRoutingRecord = (acc: Schema, fileRoute: FileRoute) => {
+  const toRoutingRecord = (schema: Schema, fileRoute: FileRoute) => {
     if (isGroupFileRoute(fileRoute)) {
-      return acc
+      return schema
     }
 
-    const { locale: rootLocale, segments: rootPathSegments } = parsePathName(
+    const { locale, segments: rootPathSegments } = parsePathName(
       fileRoute.rootPath
     )
 
     const { segments: routePathSegments } = parsePathName(fileRoute.routePath)
-
-    if (!(rootLocale in acc)) {
-      acc[rootLocale] = []
-    }
 
     const route: Route = {
       name: asPathName(...rootPathSegments),
@@ -43,9 +39,15 @@ export function getSchema(fileRoutes: FileRoute[]): Schema {
       ),
     }
 
-    acc[rootLocale] = [...acc[rootLocale], route]
-    return acc
+    const existingRecord = schema.get(locale)
+
+    schema.set(locale, {
+      locale: locale,
+      routes: [...(existingRecord?.routes || []), route],
+    })
+
+    return schema
   }
 
-  return fileRoutes.reduce(toRoutingRecord, {} as Schema)
+  return fileRoutes.reduce(toRoutingRecord, new Map() as Schema)
 }

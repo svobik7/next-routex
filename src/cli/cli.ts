@@ -31,25 +31,25 @@ const aliases: Record<string, keyof typeof commands> = {
 type Command = keyof typeof commands
 type Alias = keyof typeof aliases
 
-let routexCommand: Command | undefined
+let rootsCommand: Command | undefined
 
 if (commands[args._[0] as Command]) {
-  routexCommand = args._[0] as Command
+  rootsCommand = args._[0] as Command
 }
 
 if (aliases[args._[0] as Alias]) {
-  routexCommand = aliases[args._[0] as Alias]
+  rootsCommand = aliases[args._[0] as Alias]
 }
 
-const forwardedArgs = routexCommand ? args._.slice(1) : args._
+const forwardedArgs = rootsCommand ? args._.slice(1) : args._
 
 async function main() {
   // Make sure commands gracefully respect termination signals (e.g. from Docker)
   process.on('SIGTERM', () => process.exit(0))
   process.on('SIGINT', () => process.exit(0))
 
-  if (routexCommand) {
-    const commandFn = commands[routexCommand]
+  if (rootsCommand) {
+    const commandFn = commands[rootsCommand]
     commandFn?.()
       .then((exec: CallableFunction) => exec(forwardedArgs))
       .then(() => {

@@ -1,5 +1,5 @@
-import { Author } from '~/components/Author'
+import { AuthorPage } from '~/ui/components/pages/AuthorPage'
 
 export default function AuthorDetail({ params }: any) {
-  return <Author data={{ author: params.id }} />
+  return <AuthorPage data={{ author: params.id }} />
 }

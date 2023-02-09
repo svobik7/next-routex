@@ -1,4 +1,4 @@
-import type { ConfigRule, FileRoute } from '~/cli/types'
+import type { ConfigRoute, FileRoute } from '~/cli/types'
 import { getFileRoutes } from './getFileRoutes'
 
 function stringify(input: FileRoute) {
@@ -6,37 +6,37 @@ function stringify(input: FileRoute) {
 }
 
 const inputLocales = ['cs', 'es']
-const inputRules: ConfigRule[] = [
+const inputRules: ConfigRoute[] = [
   {
     rootPath: 'account',
-    routes: [
-      { locale: 'cs', routePath: 'ucet' },
-      { locale: 'es', routePath: 'cuenta' },
+    translations: [
+      { locale: 'cs', segment: 'ucet' },
+      { locale: 'es', segment: 'cuenta' },
     ],
     children: [
       {
         rootPath: 'profile',
-        routes: [
+        translations: [
           // each child route takes parent path as prefix => /cs/ucet/profil or /es/cuenta/perfil
-          { locale: 'cs', routePath: 'profil' },
-          { locale: 'es', routePath: 'perfil' },
+          { locale: 'cs', segment: 'profil' },
+          { locale: 'es', segment: 'perfil' },
         ],
         children: [
           {
             rootPath: 'edit',
-            routes: [
+            translations: [
               // children of children routes takes all parents path as prefix => /cs/ucet/profil/upravit or /es/cuenta/perfil/editar
-              { locale: 'cs', routePath: 'upravit' },
-              { locale: 'es', routePath: 'editar' },
+              { locale: 'cs', segment: 'upravit' },
+              { locale: 'es', segment: 'editar' },
             ],
           },
         ],
       },
       {
         rootPath: 'settings',
-        routes: [
-          { locale: 'cs', routePath: 'nastaveni' },
-          { locale: 'es', routePath: 'ajustes' },
+        translations: [
+          { locale: 'cs', segment: 'nastaveni' },
+          { locale: 'es', segment: 'ajustes' },
         ],
       },
     ],
@@ -46,31 +46,31 @@ const inputRules: ConfigRule[] = [
     children: [
       {
         rootPath: 'login',
-        routes: [
-          { locale: 'cs', routePath: 'prihlaseni' },
-          { locale: 'es', routePath: 'acceso' },
+        translations: [
+          { locale: 'cs', segment: 'prihlaseni' },
+          { locale: 'es', segment: 'acceso' },
         ],
       },
       {
         rootPath: 'signup',
-        routes: [
-          { locale: 'cs', routePath: 'registrace' },
-          { locale: 'es', routePath: 'registrarse' },
+        translations: [
+          { locale: 'cs', segment: 'registrace' },
+          { locale: 'es', segment: 'registrarse' },
         ],
       },
     ],
   },
   {
     rootPath: 'blog',
-    routes: [
+    translations: [
       // empty or missing routes means that rootPath will be used for all locales
     ],
     children: [
       {
         rootPath: 'articles',
-        routes: [
-          { locale: 'cs', routePath: 'clanky' },
-          { locale: 'es', routePath: 'articulos' },
+        translations: [
+          { locale: 'cs', segment: 'clanky' },
+          { locale: 'es', segment: 'articulos' },
         ],
         children: [
           {
@@ -80,9 +80,9 @@ const inputRules: ConfigRule[] = [
       },
       {
         rootPath: 'authors',
-        routes: [
-          { locale: 'cs', routePath: 'autori' },
-          { locale: 'es', routePath: 'autores' },
+        translations: [
+          { locale: 'cs', segment: 'autori' },
+          { locale: 'es', segment: 'autores' },
         ],
         children: [
           {
@@ -186,7 +186,7 @@ const expectedFileRoutes: FileRoute[] = [
 
 test('should create file routes', () => {
   const fileRoutes = getFileRoutes({
-    rules: inputRules,
+    routes: inputRules,
     locales: inputLocales,
   })
   expect(fileRoutes.map(stringify).sort()).toEqual(

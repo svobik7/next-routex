@@ -6,7 +6,7 @@ import { getLibCode } from '../utils/getLibCode'
 import { getLibDeclaration } from '../utils/getLibDeclaration'
 import { getSchema } from '../utils/getSchema'
 // should be loaded automatically from package json
-const PKG_NAME = 'next-routex'
+const PKG_NAME = 'next-roots'
 
 function getDistFilePath(filePath: string) {
   let pkgDir = resolvePkg(PKG_NAME, { cwd: process.cwd() })
@@ -25,7 +25,7 @@ function createCacheFile(filePath: string, contents: string) {
 
 export function generateLibFiles(config: Config) {
   // eslint-disable-next-line no-console
-  console.log('\x1b[33mnext-routex', '\x1b[37m- generating router code ...')
+  console.log('\x1b[33mnext-roots', '\x1b[37m- generating router code ...')
 
   const fileRoutes = getFileRoutes(config)
   const schema = getSchema(fileRoutes)

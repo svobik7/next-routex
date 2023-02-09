@@ -30,7 +30,7 @@ const inputFileRoutes: FileRoute[] = [
   },
 ]
 
-const expectedFiles: FileRewrite[] = [
+const expectedFileRewrites: FileRewrite[] = [
   {
     source: '/cs/account',
     from: '/cs/account',
@@ -71,6 +71,6 @@ const expectedFiles: FileRewrite[] = [
 test('should create file rewrites', () => {
   const fileRewrites = getFileRewrites(inputFileRoutes)
   expect(fileRewrites.map(stringify).sort()).toEqual(
-    expectedFiles.map(stringify).sort()
+    expectedFileRewrites.map(stringify).sort()
   )
 })

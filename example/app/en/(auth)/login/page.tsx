@@ -1,1 +1,1 @@
-export { AuthLogin as default } from '~/components/AuthLogin'
+export { AuthLoginPage as default } from '~/ui/components/pages/AuthLoginPage'

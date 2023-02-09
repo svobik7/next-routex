@@ -1,24 +1,26 @@
 {
-  "name": "next-routex-example",
+  "name": "next-roots-example",
   "version": "1.0.0",
-  "description": "Example of using next-routex package",
+  "description": "Example of using next-roots package",
   "author": "Jirka Svoboda",
   "license": "MIT",
   "private": true,
   "scripts": {
-    "routex": "node ../dist/cli.js generate",
-    "dev": "yarn routex && next dev",
-    "build": "yarn routex && next build",
+    "roots": "node ../dist/cli.js generate",
+    "dev": "yarn roots && next dev",
+    "build": "yarn roots && next build",
     "start": "next start",
-    "analyze": "yarn routex && cross-env ANALYZE=true next build",
-    "analyze:server": "yarn routex && cross-env BUNDLE_ANALYZE=server next build",
-    "analyze:browser": "yarn routex && cross-env BUNDLE_ANALYZE=browser next build"
+    "analyze": "yarn roots && cross-env ANALYZE=true next build",
+    "analyze:server": "yarn roots && cross-env BUNDLE_ANALYZE=server next build",
+    "analyze:browser": "yarn roots && cross-env BUNDLE_ANALYZE=browser next build"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.8",
     "@heroicons/react": "^2.0.14",
+    "@types/accept-language-parser": "^1.5.3",
+    "accept-language-parser": "^1.5.0",
     "next": "^13.1.6",
-    "next-routex": "link:../",
+    "next-roots": "link:../",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
@@ -28,6 +30,7 @@
     "@types/react": "^18.0.27",
     "autoprefixer": "^10.4.13",
     "cross-env": "^7.0.2",
+    "eslint": "^8.33.0",
     "eslint-config-next": "^13.1.6",
     "eslint-plugin-tailwindcss": "^3.8.3",
     "postcss": "^8.4.21",

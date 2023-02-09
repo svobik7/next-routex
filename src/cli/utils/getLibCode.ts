@@ -1,18 +1,26 @@
 import type { Schema } from '~/types'
 
-function getSchema(schema: Schema) {
-  return JSON.stringify(schema)
+function getEntries(schema: Schema) {
+  const entries = []
+
+  for (const entry of schema.entries()) {
+    entries.push(entry)
+  }
+
+  return JSON.stringify(entries)
 }
 
-const replacements = new Map([['{{schema}}', getSchema]])
+const replacements = new Map([['{{entries}}', getEntries]])
 
 const template = `
-module.exports = {{schema}}
+const schema = new Map({{entries}});
+schema.set("__default", schema.entries().next().value[1]);
+module.exports = schema;
 `
 
 export function getLibCode(schema: Schema): string {
   return template.replace(
-    /\{\{(schema)\}\}/gi,
+    /\{\{(entries)\}\}/gi,
     (match: string) => replacements.get(match)?.(schema) || ''
   )
 }

@@ -1,101 +1,113 @@
-import type { ConfigRule, ConfigRuleRoute, FileRoute } from '~/cli/types'
+import type {
+  ConfigRoute,
+  ConfigRouteParent,
+  ConfigRouteTranslation,
+  FileRoute,
+} from '~/cli/types'
 import { asPathName, getPathLocale } from '~/utils/pathUtils'
-import { getRuleRoutes, isParentRule } from '~/utils/ruleUtils'
+
+function getConfigTranslations(route: ConfigRoute): ConfigRouteTranslation[] {
+  return 'translations' in route ? route.translations : []
+}
+
+function isParentRoute(route: ConfigRoute): route is ConfigRouteParent {
+  return 'children' in route
+}
 
 type CreateFileRouteOptions = {
-  rule: ConfigRule
-  route: ConfigRuleRoute
+  route: ConfigRoute
+  translation: ConfigRouteTranslation
   parentFileRoute?: FileRoute
 }
 
 function createFileRoute({
-  rule,
   route,
+  translation,
   parentFileRoute,
 }: CreateFileRouteOptions): FileRoute {
   return {
     rootPath: asPathName(
-      parentFileRoute ? parentFileRoute.rootPath : route.locale,
-      rule.rootPath
+      parentFileRoute ? parentFileRoute.rootPath : translation.locale,
+      route.rootPath
     ),
     routePath: asPathName(
-      parentFileRoute ? parentFileRoute.routePath : route.locale,
-      route.routePath
+      parentFileRoute ? parentFileRoute.routePath : translation.locale,
+      translation.segment
     ),
   }
 }
 
 type GetFileRouteFactory = {
-  rule: ConfigRule
+  route: ConfigRoute
   parentFileRoutes?: FileRoute[]
 }
 
-function getFileRouteFactory({ rule, parentFileRoutes }: GetFileRouteFactory) {
-  return (route: ConfigRuleRoute): FileRoute => {
+function getFileRouteFactory({ route, parentFileRoutes }: GetFileRouteFactory) {
+  return (translation: ConfigRouteTranslation): FileRoute => {
     const parentLocaleFileRoute = parentFileRoutes?.find(
-      ({ rootPath }) => getPathLocale(rootPath) === route.locale
+      ({ rootPath }) => getPathLocale(rootPath) === translation.locale
     )
 
     if (parentLocaleFileRoute) {
       return createFileRoute({
-        rule,
         route,
+        translation,
         parentFileRoute: parentLocaleFileRoute,
       })
     }
 
-    return createFileRoute({ rule, route })
+    return createFileRoute({ route, translation })
   }
 }
 
-type GetRoutesFactoryOptions = {
+type GetTranslationsFactoryOptions = {
   locales: string[]
 }
 
-function getRoutesFactory({ locales }: GetRoutesFactoryOptions) {
-  return (rule: ConfigRule): ConfigRuleRoute[] => {
-    const pickOrCreateVariant = (locale: string) => {
-      const routes = getRuleRoutes(rule)
-      const existingRoute = routes?.find((v) => v.locale === locale)
-      return existingRoute || { locale, routePath: rule.rootPath }
+function getTranslationsFactory({ locales }: GetTranslationsFactoryOptions) {
+  return (route: ConfigRoute): ConfigRouteTranslation[] => {
+    const pickOrCreateTranslation = (locale: string) => {
+      const translations = getConfigTranslations(route)
+      const existingTranslation = translations.find((v) => v.locale === locale)
+      return existingTranslation || { locale, segment: route.rootPath }
     }
-    return locales.map(pickOrCreateVariant)
+    return locales.map(pickOrCreateTranslation)
   }
 }
 
 type GetFileRoutesOptions = {
-  rules: ConfigRule[]
+  routes: ConfigRoute[]
   locales: string[]
   parentFileRoutes?: FileRoute[]
   depth?: number
 }
 
 export function getFileRoutes({
-  rules,
+  routes: routes,
   locales,
   parentFileRoutes = [],
   depth = 0,
 }: GetFileRoutesOptions): FileRoute[] {
-  const getRoutes = getRoutesFactory({ locales })
+  const getTranslations = getTranslationsFactory({ locales })
 
-  return rules.reduce((acc, rule) => {
+  return routes.reduce((acc, route) => {
     const fileRoutes: FileRoute[] = []
-    const routes = getRoutes(rule)
+    const translations = getTranslations(route)
 
-    const rewriteParent = getFileRouteFactory({
-      rule,
+    const toFileRoute = getFileRouteFactory({
+      route,
       parentFileRoutes,
     })
 
-    fileRoutes.push(...routes.map(rewriteParent))
+    fileRoutes.push(...translations.map(toFileRoute))
 
     acc = [...acc, ...fileRoutes]
 
-    if (isParentRule(rule)) {
+    if (isParentRoute(route)) {
       acc = [
         ...acc,
         ...getFileRoutes({
-          rules: rule.children,
+          routes: route.children,
           locales,
           parentFileRoutes: fileRoutes,
           depth: depth + 1,

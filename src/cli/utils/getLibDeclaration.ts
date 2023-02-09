@@ -24,24 +24,27 @@ function isDynamicRoute(route: Route) {
 }
 
 function getRouteLocales(schema: Schema) {
-  return Object.keys(schema)
+  const locales = []
+
+  for (const locale of schema.keys()) {
+    locales.push(locale)
+  }
+
+  return locales
 }
 
 function getRouteNamesStatic(schema: Schema): string[] {
-  const [firstLocale] = Object.keys(schema)
-  const firstRoutes = schema[firstLocale]
+  const firstRoutes = schema.values().next().value?.routes
   return firstRoutes.filter(not(isDynamicRoute)).map(getRouteName)
 }
 
 function getRouteNamesDynamic(schema: Schema): string[] {
-  const [firstLocale] = Object.keys(schema)
-  const firstRoutes = schema[firstLocale]
+  const firstRoutes = schema.values().next().value?.routes
   return firstRoutes.filter(isDynamicRoute).map(getRouteName)
 }
 
 function getRouteParamsDynamic(schema: Schema) {
-  const [firstLocale] = Object.keys(schema)
-  const firstRoutes = schema[firstLocale]
+  const firstRoutes = schema.values().next().value?.routes
   const dynamicRoutes = firstRoutes.filter(isDynamicRoute)
 
   return dynamicRoutes.reduce(
@@ -78,15 +81,15 @@ const replacements = new Map([
 ])
 
 const template = `
-export type RouteLocale = {{routeLocales}}
-export type RouteNameStatic = {{routeNamesStatic}}
-export type RouteNameDynamic = {{routeNamesDynamic}}
-export type RouteName = RouteNameStatic | RouteNameDynamic
-export type Route = { name: RouteName; href: \`/\${string}\` }
-export type Schema = { [P in RouteLocale]: Route[] }
+export type RouteLocale = {{routeLocales}};
+export type RouteNameStatic = {{routeNamesStatic}};
+export type RouteNameDynamic = {{routeNamesDynamic}};
+export type RouteName = RouteNameStatic | RouteNameDynamic;
+export type Route = { name: RouteName; href: \`/\${string}\` };
+export type Schema = { [P in RouteLocale]: Route[] };
 
-export type RouteParamsStatic<T extends object = {}> = T & { locale?: RouteLocale }
-export type RouteParamsDynamic<T extends RouteName> = {{routeParamsDynamic}}
+export type RouteParamsStatic<T extends object = {}> = T & { locale?: RouteLocale };
+export type RouteParamsDynamic<T extends RouteName> = {{routeParamsDynamic}};
 
 export class Router {
   constructor(schema: Schema)
@@ -102,7 +105,7 @@ export class Router {
   setLocale(locale: string): string
 }
 
-export const schema: Schema
+export const schema: Schema;
 `
 
 export function getLibDeclaration(schema: Schema): string {
