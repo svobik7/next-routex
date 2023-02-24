@@ -1,22 +1,13 @@
 type AuthorPageProps = {
-  data: {
-    author: unknown
-  }
+  id: string
 }
 
 export function AuthorPage(props: AuthorPageProps) {
-  const {
-    data: { author },
-  } = props
+  const { id } = props
 
   return (
     <div className="">
-      Author
-      <br />
-      <br />
-      {JSON.stringify({
-        author,
-      })}
+      Author ID: <strong>{id}</strong>
     </div>
   )
 }

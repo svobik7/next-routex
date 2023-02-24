@@ -1,102 +1,129 @@
 import { compile, match } from 'path-to-regexp'
-import type { Route, Schema } from '~/types'
-
-type CompileHrefOptions = {
-  locale: string
-  routeHref: string
-  params: Record<string, string>
-}
+import type { Route, RouterSchema } from '~/types'
+import { getLocaleFactory } from '~/utils/getLocale'
 
 export class Router {
-  private schema: Schema
-  private locale: string
+  private schema: RouterSchema
+  private location = '/'
 
-  constructor(schema: Schema) {
+  constructor(schema: RouterSchema) {
     this.schema = schema
-    this.locale = this.getDefaultLocale()
   }
 
-  public getLocale() {
-    return this.locale
+  public setLocation(href: string) {
+    this.location = this.formatHref(href)
   }
 
-  public setLocale(locale: string) {
-    if (this.isValidLocale(locale)) {
-      this.locale = locale
-    }
+  /**
+   * Creates href by finding route by given name and compiles its href with given params
+   * @param name
+   * @param params
+   * @returns
+   */
+  public getHref(name: string, params: Record<string, string> = {}): string {
+    const { locale = this.getLocationLocale(), ...hrefParams } = params
+    const route = this.findRouteByLocaleAndName(locale, name)
+
+    return this.formatHref(this.compileHref(route?.href || '', hrefParams))
   }
 
-  public getDefaultLocale() {
-    return String(
-      this.schema.get('__default')?.locale ||
-        this.schema.keys().next().value ||
-        ''
+  /**
+   * Retrieves locale of given href
+   * @param href
+   * @returns
+   */
+  public getHrefLocale(href: string): string {
+    const getLocale = getLocaleFactory({
+      locales: this.schema.locales,
+      defaultLocale: this.schema.defaultLocale,
+    })
+
+    return getLocale(href)
+  }
+
+  /**
+   * Finds route matching given href
+   * @param href
+   * @returns
+   */
+  public getRouteByHref(href: string): Route | undefined {
+    const locale = this.getHrefLocale(href)
+    return this.findRouteByLocaleAndHref(locale, href)
+  }
+
+  /**
+   * Gets all routes for given locale
+   * @param locale
+   * @returns
+   */
+  private getLocalizedRoutes(locale: string) {
+    return this.schema.routes[locale] || []
+  }
+
+  /**
+   * Finds route for given name and href
+   * @param locale
+   * @param href
+   * @returns
+   */
+  private findRouteByLocaleAndName(locale: string, name: string) {
+    return this.getLocalizedRoutes(locale).find(
+      (route: Route) => route.name === name
     )
   }
 
-  public getHref(name: string, params: Record<string, string> = {}): string {
-    const { locale = this.getLocale(), ...hrefParams } = params
-    const route = this.findRouteByLocaleAndName(locale, name)
-    return route
-      ? this.compileHref({ locale, routeHref: route.href, params: hrefParams })
-      : ''
-  }
-
-  public getRoute(href: string): Route | undefined {
-    const { locale, routeHref } = this.parseHref(href)
-    return this.findRouteByLocaleAndHref(locale, routeHref)
-  }
-
-  private getRoutes(locale: string) {
-    return this.schema.get(locale)?.routes || []
-  }
-
-  private findRouteByLocaleAndName(locale: string, name: string) {
-    return this.getRoutes(locale).find((route: Route) => route.name === name)
-  }
-
-  private findRouteByLocaleAndHref(locale: string, routeHref: string) {
-    return this.getRoutes(locale).find((route: Route) => {
+  /**
+   * Finds route for given locale and href
+   * @param locale
+   * @param href
+   * @returns
+   */
+  private findRouteByLocaleAndHref(locale: string, href: string) {
+    return this.getLocalizedRoutes(locale).find((route: Route) => {
       const isMatch = match(route.href, { decode: decodeURIComponent })
-      return isMatch(routeHref)
+      return isMatch(href)
     })
   }
 
-  private compileHref({ routeHref, locale, params }: CompileHrefOptions) {
-    let compiledRouteHref = ''
+  /**
+   * Puts given params to their appropriate places in given href
+   * @param href
+   * @param params
+   * @returns
+   */
+  private compileHref(href: string, params: Record<string, string>) {
+    let compiledHref = ''
     try {
-      const toPath = compile(routeHref, { encode: encodeURIComponent })
-      compiledRouteHref = toPath(params)
+      const getHref = compile(href, {
+        encode: encodeURIComponent,
+      })
+      compiledHref = getHref(params)
     } catch {
-      compiledRouteHref = routeHref
+      compiledHref = href
     }
 
-    return this.formatHref(...[locale, compiledRouteHref])
+    return compiledHref
   }
 
-  private parseHref(href: string) {
-    const rootLessHref = href.startsWith('/') ? href.slice(1) : href
-    const [locale, ...routeHrefSegments] = rootLessHref.split('/')
+  /**
+   * Removes duplicated or trailing slashes from given href and puts the slash at the beginning
+   * @param hrefSegments
+   * @returns
+   */
+  private formatHref(...hrefSegments: string[]) {
+    const href = hrefSegments
+      .join('/')
+      .replace(/\/\/+/g, '/')
+      .replace(/\/$/, '')
 
-    if (this.isValidLocale(locale)) {
-      return { locale, routeHref: this.formatHref(...routeHrefSegments) }
-    }
-
-    return { locale: '', routeHref: this.formatHref(rootLessHref) }
-  }
-
-  private formatHref(...segments: string[]) {
-    const href = segments.join('/').replace(/\/\/+/g, '/')
     return href.startsWith('/') ? href : `/${href}`
   }
 
-  private isValidLocale(locale: string) {
-    let isValid = false
-
-    for (const validLocale of this.schema.keys()) {
-      isValid = isValid || validLocale === locale
-    }
-
-    return isValid
+  /**
+   * Retrieves locale of current location href or default schema locale as fallback
+   * @returns
+   */
+  private getLocationLocale() {
+    return this.getHrefLocale(this.location) || this.schema.defaultLocale
   }
 }

@@ -6,13 +6,13 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "roots": "node ../dist/cli.js generate",
-    "dev": "yarn roots && next dev",
-    "build": "yarn roots && next build",
+    "roots": "node ../dist/cli.js",
+    "dev": "next dev",
+    "build": "next build",
     "start": "next start",
-    "analyze": "yarn roots && cross-env ANALYZE=true next build",
-    "analyze:server": "yarn roots && cross-env BUNDLE_ANALYZE=server next build",
-    "analyze:browser": "yarn roots && cross-env BUNDLE_ANALYZE=browser next build"
+    "analyze": "cross-env ANALYZE=true next build",
+    "analyze:server": "cross-env BUNDLE_ANALYZE=server next build",
+    "analyze:browser": "cross-env BUNDLE_ANALYZE=browser next build"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.8",

@@ -68,7 +68,6 @@ export function middleware(request: NextRequest) {
   const isChangingLocale =
     request.cookies.get(COOKIE_LOCALE_NAME)?.value !== locale
 
-  console.log('Middleware:', { locale, isChangingLocale, isRoot })
   let response
   if (isRoot) {
     response = NextResponse.redirect(new URL(ROOT_URL + locale, request.url))

@@ -5,9 +5,11 @@ import { server } from '~/server'
 import { Footer } from '../Footer'
 import { Header } from '../Header'
 
-type PageLayoutProps = PropsWithChildren
+type PageLayoutProps = PropsWithChildren<{ locale: string }>
 
-export function PageLayout({ children }: PageLayoutProps) {
+export function PageLayout({ children, locale }: PageLayoutProps) {
+  server.router.setLocale(locale)
+
   return (
     <div className="grid grid-cols-1 gap-4">
       <div className="flex">

@@ -1,24 +1,13 @@
 type ArticlePageProps = {
-  data: {
-    author: unknown
-    article: unknown
-  }
+  id: string
 }
 
 export function ArticlePage(props: ArticlePageProps) {
-  const {
-    data: { author, article },
-  } = props
+  const { id } = props
 
   return (
     <div className="">
-      Article
-      <br />
-      <br />
-      {JSON.stringify({
-        author,
-        article,
-      })}
+      Article ID: <strong>{id}</strong>
     </div>
   )
 }

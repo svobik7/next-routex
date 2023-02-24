@@ -1,71 +1,62 @@
 import path from 'path'
-import type { Config } from '~/cli/types'
+import resolvePkg from 'resolve-pkg'
+import type { CliParams, Config } from '~/cli/types'
 import { isDirectory } from '~/utils/fileUtils'
 
-// TODO: make this configurable by args
-const configPath = 'roots.config.js'
+export const PKG_NAME = 'next-roots'
+export const DEFAULT_ORIGIN_DIR = './roots'
+export const DEFAULT_LOCALIZE_DIR = './app'
 
-function getDefaultLocaleFactory(config: Config) {
-  return () => {
-    const defaultLocale = config.locales.at(0)
+function getPackageDir(projectRoot: string) {
+  let pkgDir = resolvePkg(PKG_NAME, { cwd: projectRoot }) || ''
 
-    if (!defaultLocale) {
-      throw new Error('Default locale was not specified.')
-    }
-
-    return defaultLocale
+  if (!pkgDir) {
+    pkgDir = path.join(projectRoot, `node_modules/${PKG_NAME}`)
   }
+
+  return pkgDir
 }
 
-function getRootPathFactory(config: Config) {
-  return () => path.join(process.cwd(), config.rootDir)
+function getPathFactory(dirName: string) {
+  return (fileName = '') => path.join(dirName, fileName)
 }
 
-function getLocalePathFactory(config: Config) {
-  const getRootPath = getRootPathFactory(config)
-  return (locale: string) => path.join(getRootPath(), locale)
-}
+export function getConfig(cliParams: CliParams): Config {
+  const projectRoot = process.cwd()
+  const packageRoot = getPackageDir(projectRoot)
+  const distRoot = path.join(packageRoot, 'dist')
 
-function getDefaultLocalePathFactory(config: Config) {
-  const getDefaultLocale = getDefaultLocaleFactory(config)
-  const getRootPath = getRootPathFactory(config)
-  return () => {
-    return path.join(getRootPath(), getDefaultLocale())
-  }
-}
+  const getOriginAbsolutePath = getPathFactory(
+    path.join(projectRoot, cliParams.originDir)
+  )
 
-export function getConfig() {
-  // create final config
-  const cfgDefault: Config = {
-    rootDir: './app',
-    locales: [],
-    routes: [],
+  if (!isDirectory(getOriginAbsolutePath())) {
+    throw new Error('Invalid "rootsDir" path')
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const cfgRuntime = require(path.join(process.cwd(), configPath))
-  const config: Config = { ...cfgDefault, ...cfgRuntime }
+  const getLocalizedAbsolutePath = getPathFactory(
+    path.join(projectRoot, cliParams.localizedDir)
+  )
 
-  const getRootPath = getRootPathFactory(config)
-
-  if (!isDirectory(getRootPath())) {
-    throw new Error('Root path is not valid path')
+  if (!isDirectory(getLocalizedAbsolutePath())) {
+    throw new Error('Invalid "appDir" path')
   }
 
-  const getDefaultLocalePath = getDefaultLocalePathFactory(config)
+  const getDistAbsolutePath = getPathFactory(distRoot)
+  const getCacheAbsolutePath = getPathFactory(path.join(distRoot, 'cache'))
 
-  if (!isDirectory(getDefaultLocalePath())) {
-    throw new Error('Default locale path is not valid path')
+  const defaultLocale = cliParams.defaultLocale || cliParams.locales.at(0) || ''
+
+  if (!cliParams.locales.includes(defaultLocale)) {
+    throw new Error('Invalid or empty "defaultLocale". Not found in "locales"')
   }
 
-  return Object.freeze(config)
-}
-
-export function getConfigUtils(config: Config) {
-  return {
-    getRootPath: getRootPathFactory(config),
-    getLocalePath: getLocalePathFactory(config),
-    getDefaultLocalePath: getDefaultLocalePathFactory(config),
-    getDefaultLocale: getDefaultLocaleFactory(config),
-  }
+  return Object.freeze({
+    locales: cliParams.locales,
+    defaultLocale,
+    getLocalizedAbsolutePath,
+    getOriginAbsolutePath,
+    getDistAbsolutePath,
+    getCacheAbsolutePath,
+  })
 }

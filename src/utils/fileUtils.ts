@@ -105,9 +105,29 @@ export function isDirectory(dirPath: string): boolean {
   return statSync(dirPath).isDirectory()
 }
 
-/**
- * Constructs file path from segments
- */
-export function getFilePath(...segments: string[]): string {
-  return path.join(...segments)
+export function getPathNameWithoutExt(pathName: string): string {
+  const newFileName = path.basename(pathName, path.extname(pathName))
+  const newFilePath = path.join(path.dirname(pathName), newFileName)
+
+  return newFilePath
+}
+
+export function getPathNameWithoutBrackets(pathName: string): string {
+  return pathName.replace(/[^a-zA-Z0-9/_-]+/gi, '')
+}
+
+function capitalize(input: string) {
+  return input.charAt(0).toUpperCase() + input.slice(1)
+}
+
+export function getPathNameInPascalCase(pathName: string): string {
+  return pathName.split('/').map(capitalize).join('')
+}
+
+export function getDirBaseName(pathName: string): string {
+  return path.basename(getDirName(pathName))
+}
+
+export function getDirName(pathName: string): string {
+  return path.dirname(pathName)
 }

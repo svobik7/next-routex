@@ -1,47 +1,40 @@
-export type Config = {
-  rootDir: string
+export type CliParams = {
   locales: string[]
-  routes: ConfigRoute[]
+  defaultLocale: string
+  localizedDir: string
+  originDir: string
 }
 
-export type ConfigRoute =
-  | ConfigRouteParent
-  | ConfigRouteChild
-  | ConfigRouteGroup
-  | ConfigRouteDynamic
-
-export type ConfigRouteChild = {
-  rootPath: string
-  translations: ConfigRouteTranslation[]
+export type Config = {
+  locales: string[]
+  defaultLocale: string
+  getLocalizedAbsolutePath: (fileName?: string) => string
+  getOriginAbsolutePath: (fileName?: string) => string
+  getDistAbsolutePath: (fileName?: string) => string
+  getCacheAbsolutePath: (fileName?: string) => string
 }
 
-export type ConfigRouteParent = ConfigRouteChild & {
-  children: Array<ConfigRoute>
+export type Origin = {
+  path: string
+  localizations: OriginLocalization[]
 }
 
-export type ConfigRouteGroup = Omit<ConfigRouteParent, 'translations'> & {
-  rootPath: `(${string})`
-}
-
-export type ConfigRouteDynamic = Omit<
-  ConfigRouteParent | ConfigRouteChild,
-  'translations'
-> & {
-  rootPath: `[${string}]`
-}
-
-export type ConfigRouteTranslation = {
+export type OriginLocalization = {
   locale: string
-  segment: string
+  path: string
 }
 
-export type FileRoute = {
-  rootPath: `/${string}`
-  routePath: `/${string}`
+export type Rewrite = {
+  originPath: string
+  localizedPath: string
 }
 
-export type FileRewrite = {
-  source: `/${string}`
-  from: `/${string}`
-  to: `/${string}`
+export type Root = {
+  path: string
+  translations: RootTranslation[]
+}
+
+export type RootTranslation = {
+  locale: string
+  path: string
 }

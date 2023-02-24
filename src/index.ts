@@ -1,6 +1,7 @@
-import type { Schema } from './types'
+import type { RouterSchema } from './types'
 
-let schema: Schema = new Map()
+let schema: RouterSchema
+
 try {
   schema = require('./cache/schema')
 } catch {
