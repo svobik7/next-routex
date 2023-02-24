@@ -1,6 +1,6 @@
 import type { Route } from '~/types'
-import { formatPath } from '~/utils/formatPath'
-import { pipe } from '~/utils/pipe'
+import { formatPath } from '~/utils/path-utils'
+import { pipe } from '~/utils/pipe-utils'
 import type { Rewrite } from '../types'
 
 function removePageSegment(input: string) {

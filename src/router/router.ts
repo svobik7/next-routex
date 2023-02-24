@@ -1,6 +1,6 @@
 import { compile, match } from 'path-to-regexp'
 import type { Route, RouterSchema } from '~/types'
-import { getLocaleFactory } from '~/utils/getLocale'
+import { getLocaleFactory } from '~/utils/locale-utils'
 
 export class Router {
   private schema: RouterSchema

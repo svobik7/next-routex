@@ -1,12 +1,12 @@
 import path from 'path'
+import { getDiffPos } from '~/cli/utils/getDiffPos'
 import {
+  formatPath,
   getPathNameInPascalCase,
-  getPathNameWithoutBrackets,
   getPathNameWithoutExt,
-} from '~/utils/fileUtils'
-import { formatPath } from '~/utils/formatPath'
-import { getDiffPos } from '~/utils/getDiffPos'
-import { pipe } from '~/utils/pipe'
+  getPathNameWithoutSymbols,
+} from '~/utils/path-utils'
+import { pipe } from '~/utils/pipe-utils'
 import type { Config, Rewrite } from '../types'
 
 export function getPattern(replacementName: string) {
@@ -69,7 +69,7 @@ export function getOriginNameFactory(suffix = 'page') {
   return (rewrite: Rewrite) => {
     const getName = pipe(
       getPathNameWithoutExt,
-      getPathNameWithoutBrackets,
+      getPathNameWithoutSymbols,
       getPathNameInPascalCase
     )
 

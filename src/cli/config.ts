@@ -1,7 +1,7 @@
 import path from 'path'
 import resolvePkg from 'resolve-pkg'
 import type { CliParams, Config } from '~/cli/types'
-import { isDirectory } from '~/utils/fileUtils'
+import { isDirectory } from '~/utils/fs-utils'
 
 export const PKG_NAME = 'next-roots'
 export const DEFAULT_ORIGIN_DIR = './roots'
@@ -22,24 +22,18 @@ function getPathFactory(dirName: string) {
 }
 
 export function getConfig(cliParams: CliParams): Config {
-  const projectRoot = process.cwd()
-  const packageRoot = getPackageDir(projectRoot)
+  const packageRoot = getPackageDir(process.cwd())
   const distRoot = path.join(packageRoot, 'dist')
 
-  const getOriginAbsolutePath = getPathFactory(
-    path.join(projectRoot, cliParams.originDir)
-  )
+  const getOriginAbsolutePath = getPathFactory(cliParams.originDir)
+  const getLocalizedAbsolutePath = getPathFactory(cliParams.localizedDir)
 
   if (!isDirectory(getOriginAbsolutePath())) {
-    throw new Error('Invalid "rootsDir" path')
+    throw new Error('Invalid "originDir" path')
   }
 
-  const getLocalizedAbsolutePath = getPathFactory(
-    path.join(projectRoot, cliParams.localizedDir)
-  )
-
   if (!isDirectory(getLocalizedAbsolutePath())) {
-    throw new Error('Invalid "appDir" path')
+    throw new Error('Invalid "localizeDir" path')
   }
 
   const getDistAbsolutePath = getPathFactory(distRoot)

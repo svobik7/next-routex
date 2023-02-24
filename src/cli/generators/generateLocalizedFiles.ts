@@ -1,4 +1,4 @@
-import { copyFile, removeFile, writeFile } from '~/utils/fileUtils'
+import { copyFile, removeFile, writeFile } from '~/utils/fs-utils'
 import { compileFactory as compileLayoutFactory } from '../templates/layout-tpl'
 import { compileFactory as compilePageFactory } from '../templates/page-tpl'
 import type { Config, Rewrite } from '../types'

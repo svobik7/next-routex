@@ -1,10 +1,11 @@
-import { server } from '~/server'
+import { router } from '~/server/router'
 import { LocaleButton } from './buttons/LocaleButton/LocaleButton'
 
-export function Header() {
+type HeaderProps = { locale: string }
+export function Header({ locale }: HeaderProps) {
   return (
     <div className="flex flex-1 justify-end">
-      <LocaleButton locale={server.router.getLocale()} />
+      <LocaleButton locale={locale} />
     </div>
   )
 }

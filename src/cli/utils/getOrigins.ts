@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
-import { isDirectory } from '~/utils/fileUtils'
-import { formatPath } from '~/utils/formatPath'
+import { isDirectory } from '~/utils/fs-utils'
+import { formatPath } from '~/utils/path-utils'
 import type { Origin, RootTranslation } from '../types'
 
 const I18N_FILE_NAMES = ['i18n.mjs', 'i18n.js']

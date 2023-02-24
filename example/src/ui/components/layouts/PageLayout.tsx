@@ -1,19 +1,18 @@
 /* eslint-disable @next/next/no-head-element */
+import type { RouteLocale } from 'next-roots'
 import Link from 'next/link'
 import type { PropsWithChildren } from 'react'
-import { server } from '~/server'
+import { router } from '~/server/router'
 import { Footer } from '../Footer'
 import { Header } from '../Header'
 
-type PageLayoutProps = PropsWithChildren<{ locale: string }>
+type PageLayoutProps = PropsWithChildren<{ locale: RouteLocale }>
 
 export function PageLayout({ children, locale }: PageLayoutProps) {
-  server.router.setLocale(locale)
-
   return (
     <div className="grid grid-cols-1 gap-4">
       <div className="flex">
-        <Header />
+        <Header locale={locale} />
       </div>
       <div className="flex w-full justify-center rounded-md bg-black/20 px-4 py-2 text-white">
         {children}
@@ -22,17 +21,19 @@ export function PageLayout({ children, locale }: PageLayoutProps) {
         Current locale links:
         <ul>
           <li>
-            <Link href={server.router.getHref('/account')}>Account</Link>
+            <Link href={router.getHref('/account', { locale })}>Account</Link>
           </li>
           <li>
-            <Link href={server.router.getHref('/account/profile')}>
+            <Link href={router.getHref('/account/profile', { locale })}>
               Account Profile
             </Link>
           </li>
           <li>
             <Link
-              href={server.router.getHref('/blog/articles/[articleId]', {
+              href={router.getHref('/blog/[authorId]/[articleId]', {
                 articleId: '3',
+                authorId: '2',
+                locale,
               })}
             >
               Blog Articles Detail
@@ -40,8 +41,9 @@ export function PageLayout({ children, locale }: PageLayoutProps) {
           </li>
           <li>
             <Link
-              href={server.router.getHref('/blog/authors/[authorId]', {
+              href={router.getHref('/blog/[authorId]', {
                 authorId: '1',
+                locale,
               })}
             >
               Blog Authors Detail
@@ -53,21 +55,20 @@ export function PageLayout({ children, locale }: PageLayoutProps) {
         EN locale links:
         <ul>
           <li>
-            <Link href={server.router.getHref('/account', { locale: 'en' })}>
+            <Link href={router.getHref('/account', { locale: 'en' })}>
               Account
             </Link>
           </li>
           <li>
-            <Link
-              href={server.router.getHref('/account/profile', { locale: 'en' })}
-            >
+            <Link href={router.getHref('/account/profile', { locale: 'en' })}>
               Account Profile
             </Link>
           </li>
           <li>
             <Link
-              href={server.router.getHref('/blog/articles/[articleId]', {
+              href={router.getHref('/blog/[authorId]/[articleId]', {
                 articleId: '3',
+                authorId: '3',
                 locale: 'en',
               })}
             >
@@ -76,7 +77,7 @@ export function PageLayout({ children, locale }: PageLayoutProps) {
           </li>
           <li>
             <Link
-              href={server.router.getHref('/blog/authors/[authorId]', {
+              href={router.getHref('/blog/[authorId]', {
                 authorId: '1',
                 locale: 'en',
               })}
@@ -90,21 +91,20 @@ export function PageLayout({ children, locale }: PageLayoutProps) {
         CS locale links:
         <ul>
           <li>
-            <Link href={server.router.getHref('/account', { locale: 'cs' })}>
+            <Link href={router.getHref('/account', { locale: 'cs' })}>
               Account
             </Link>
           </li>
           <li>
-            <Link
-              href={server.router.getHref('/account/profile', { locale: 'cs' })}
-            >
+            <Link href={router.getHref('/account/profile', { locale: 'cs' })}>
               Account Profile
             </Link>
           </li>
           <li>
             <Link
-              href={server.router.getHref('/blog/articles/[articleId]', {
+              href={router.getHref('/blog/[authorId]/[articleId]', {
                 articleId: '3',
+                authorId: '3',
                 locale: 'cs',
               })}
             >
@@ -113,7 +113,7 @@ export function PageLayout({ children, locale }: PageLayoutProps) {
           </li>
           <li>
             <Link
-              href={server.router.getHref('/blog/authors/[authorId]', {
+              href={router.getHref('/blog/[authorId]', {
                 authorId: '1',
                 locale: 'cs',
               })}
@@ -124,7 +124,7 @@ export function PageLayout({ children, locale }: PageLayoutProps) {
         </ul>
       </div>
       <div className="flex">
-        <Footer currentLocale={server.currentLocale} />
+        <Footer currentLocale={locale} />
       </div>
     </div>
   )

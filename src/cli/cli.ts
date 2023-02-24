@@ -7,8 +7,8 @@ import type { CliParams } from './types'
 const [, , configPath = 'roots.config.js', configParams = {}] = process.argv
 
 const cliDefaultParams: CliParams = {
-  localizedDir: DEFAULT_LOCALIZE_DIR,
-  originDir: DEFAULT_ORIGIN_DIR,
+  localizedDir: path.resolve(DEFAULT_LOCALIZE_DIR),
+  originDir: path.resolve(DEFAULT_ORIGIN_DIR),
   defaultLocale: '',
   locales: [],
 }

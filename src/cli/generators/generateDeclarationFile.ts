@@ -1,5 +1,5 @@
 import type { RouterSchema } from '~/types'
-import { writeFile } from '~/utils/fileUtils'
+import { writeFile } from '~/utils/fs-utils'
 import { compile } from '../templates/lib-declaration-tpl'
 import type { Config } from '../types'
 

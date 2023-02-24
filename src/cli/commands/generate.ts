@@ -1,15 +1,12 @@
-import type { Route } from '~/types'
-import { queue } from '~/utils/queue'
+import { queue } from '~/utils/queue-utils'
 import { generateDeclarationFileFactory } from '../generators/generateDeclarationFile'
 import { generateLocalizedFilesFactory } from '../generators/generateLocalizedFiles'
 import { generateRouterSchemaFileFactory } from '../generators/generateRouterSchemaFile'
-import type { Config, Rewrite } from '../types'
+import type { Config } from '../types'
 import { getOrigins } from '../utils/getOrigins'
 import { getRewrites } from '../utils/getRewrites'
 import { getRoute, isRoute } from '../utils/getRoute'
 import { getRouterSchema } from '../utils/getRouterSchema'
-
-type ExecuteParams = { rewrites: Rewrite[]; routes: Route[] }
 
 export function generateFactory(config: Config) {
   const { defaultLocale, locales, getOriginAbsolutePath } = config
@@ -19,8 +16,9 @@ export function generateFactory(config: Config) {
   const generateRouterFile = generateRouterSchemaFileFactory(config)
 
   return async () => {
+    const infoMessage = '\x1b[32mnext-roots\x1b[37m - generation done in'
     // eslint-disable-next-line no-console
-    console.log('\x1b[33mnext-roots', '\x1b[37m- generator in progress ...')
+    console.time(infoMessage)
 
     const origins = await getOrigins({
       locales,
@@ -36,7 +34,9 @@ export function generateFactory(config: Config) {
     const execute = queue<void>(
       () => generateLocalizedFiles(rewrites),
       () => generateDeclarationFile(routerSchema),
-      () => generateRouterFile(routerSchema)
+      () => generateRouterFile(routerSchema),
+      // eslint-disable-next-line no-console
+      () => console.timeEnd(infoMessage)
     )
 
     return execute()

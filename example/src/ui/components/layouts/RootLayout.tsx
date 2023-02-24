@@ -1,10 +1,11 @@
 /* eslint-disable @next/next/no-head-element */
 import type { PropsWithChildren } from 'react'
+import type { RouteLocale } from 'next-roots'
 import { PageLayout } from './PageLayout'
 
 import '~/ui/styles.css'
 
-type RootLayoutProps = PropsWithChildren<{ locale: string }>
+type RootLayoutProps = PropsWithChildren<{ locale: RouteLocale }>
 
 /**
  * Root layout is meant to be used as top level layout for all routes of single locale.

@@ -1,5 +1,5 @@
 import type { Route, RouterSchema } from '~/types'
-import { getLocaleFactory } from '~/utils/getLocale'
+import { getLocaleFactory } from '~/utils/locale-utils'
 
 type GetRouterSchemaParams = {
   routes: Route[]
