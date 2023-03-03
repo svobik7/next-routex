@@ -4,14 +4,9 @@ import { getLocaleFactory } from '~/utils/locale-utils'
 
 export class Router {
   private schema: RouterSchema
-  private location = '/'
 
   constructor(schema: RouterSchema) {
     this.schema = schema
-  }
-
-  public setLocation(href: string) {
-    this.location = this.formatHref(href)
   }
 
   /**
@@ -21,10 +16,10 @@ export class Router {
    * @returns
    */
   public getHref(name: string, params: Record<string, string> = {}): string {
-    const { locale = this.getLocationLocale(), ...hrefParams } = params
+    const { locale = this.schema.defaultLocale, ...hrefParams } = params
     const route = this.findRouteByLocaleAndName(locale, name)
 
-    return this.formatHref(this.compileHref(route?.href || '', hrefParams))
+    return formatHref(compileHref(route?.href || '', hrefParams))
   }
 
   /**
@@ -32,7 +27,7 @@ export class Router {
    * @param href
    * @returns
    */
-  public getHrefLocale(href: string): string {
+  public getLocaleFromHref(href: string): string {
     const getLocale = getLocaleFactory({
       locales: this.schema.locales,
       defaultLocale: this.schema.defaultLocale,
@@ -46,8 +41,8 @@ export class Router {
    * @param href
    * @returns
    */
-  public getRouteByHref(href: string): Route | undefined {
-    const locale = this.getHrefLocale(href)
+  public getRouteFromHref(href: string): Route | undefined {
+    const locale = this.getLocaleFromHref(href)
     return this.findRouteByLocaleAndHref(locale, href)
   }
 
@@ -84,46 +79,38 @@ export class Router {
       return isMatch(href)
     })
   }
+}
 
-  /**
-   * Puts given params to their appropriate places in given href
-   * @param href
-   * @param params
-   * @returns
-   */
-  private compileHref(href: string, params: Record<string, string>) {
-    let compiledHref = ''
-    try {
-      const getHref = compile(href, {
-        encode: encodeURIComponent,
-      })
-      compiledHref = getHref(params)
-    } catch {
-      compiledHref = href
-    }
-
-    return compiledHref
+/**
+ * Puts given params to their appropriate places in given href
+ * @param href
+ * @param params
+ * @returns
+ */
+export function compileHref(
+  href: string,
+  params: Record<string, string>
+): string {
+  let compiledHref = ''
+  try {
+    const getHref = compile(href, {
+      encode: encodeURIComponent,
+    })
+    compiledHref = getHref(params)
+  } catch {
+    compiledHref = href
   }
 
-  /**
-   * Removes duplicated or trailing slashes from given href and puts the slash at the beginning
-   * @param hrefSegments
-   * @returns
-   */
-  private formatHref(...hrefSegments: string[]) {
-    const href = hrefSegments
-      .join('/')
-      .replace(/\/\/+/g, '/')
-      .replace(/\/$/, '')
+  return compiledHref
+}
 
-    return href.startsWith('/') ? href : `/${href}`
-  }
+/**
+ * Removes duplicated or trailing slashes from given href and puts the slash at the beginning
+ * @param hrefSegments
+ * @returns
+ */
+export function formatHref(...hrefSegments: string[]): string {
+  const href = hrefSegments.join('/').replace(/\/\/+/g, '/').replace(/\/$/, '')
 
-  /**
-   * Retrieves locale of current location href or default schema locale as fallback
-   * @returns
-   */
-  private getLocationLocale() {
-    return this.getHrefLocale(this.location) || this.schema.defaultLocale
-  }
+  return href.startsWith('/') ? href : `/${href}`
 }

@@ -1,10 +1,8 @@
 import type { RouterSchema } from '~/types'
 import type { CompileParams } from './tpl-utils'
-import { compileTemplateFactory, getPattern } from './tpl-utils'
+import { compileTemplateFactory, getPatternsFromNames } from './tpl-utils'
 
-export const PATTERNS = {
-  schema: getPattern('schema'),
-}
+export const PATTERNS = getPatternsFromNames('schema')
 
 export const tpl = `
 module.exports = Object.freeze(${PATTERNS.schema});
@@ -12,14 +10,15 @@ module.exports = Object.freeze(${PATTERNS.schema});
 
 function getCompileParams(
   schema: RouterSchema
-): CompileParams<keyof typeof PATTERNS> {
+): CompileParams<typeof PATTERNS> {
   return {
     schema: JSON.stringify(schema),
   }
 }
 
 export function compile(schema: RouterSchema) {
-  const compileTemplate = compileTemplateFactory(tpl)
-  const compileParams = getCompileParams(schema)
-  return compileTemplate(compileParams)
+  const params = getCompileParams(schema)
+
+  const compileTemplate = compileTemplateFactory()
+  return compileTemplate(tpl, params)
 }

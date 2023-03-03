@@ -1,7 +1,7 @@
 import path from 'path'
 import resolvePkg from 'resolve-pkg'
 import type { CliParams, Config } from '~/cli/types'
-import { isDirectory } from '~/utils/fs-utils'
+import { isDirectory, readFile } from '~/utils/fs-utils'
 
 export const PKG_NAME = 'next-roots'
 export const DEFAULT_ORIGIN_DIR = './roots'
@@ -19,6 +19,10 @@ function getPackageDir(projectRoot: string) {
 
 function getPathFactory(dirName: string) {
   return (fileName = '') => path.join(dirName, fileName)
+}
+
+function getContentsFactory(getAbsolutePath: (fileName: string) => string) {
+  return (fileName: string): string => readFile(getAbsolutePath(fileName))
 }
 
 export function getConfig(cliParams: CliParams): Config {
@@ -45,6 +49,8 @@ export function getConfig(cliParams: CliParams): Config {
     throw new Error('Invalid or empty "defaultLocale". Not found in "locales"')
   }
 
+  const getOriginContents = getContentsFactory(getOriginAbsolutePath)
+
   return Object.freeze({
     locales: cliParams.locales,
     defaultLocale,
@@ -52,5 +58,6 @@ export function getConfig(cliParams: CliParams): Config {
     getOriginAbsolutePath,
     getDistAbsolutePath,
     getCacheAbsolutePath,
+    getOriginContents,
   })
 }

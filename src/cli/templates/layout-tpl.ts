@@ -5,14 +5,14 @@ import {
   compileTemplateFactory,
   getOriginNameFactory,
   getOriginPathFactory,
-  getPattern,
+  getPatternsFromNames,
 } from './tpl-utils'
 
-export const PATTERNS = {
-  originName: getPattern('originName'),
-  originPath: getPattern('originPath'),
-  locale: getPattern('locale'),
-}
+export const PATTERNS = getPatternsFromNames(
+  'originName',
+  'originPath',
+  'locale'
+)
 
 export const tpl = `
 import ${PATTERNS.originName}Origin from '${PATTERNS.originPath}'
@@ -22,8 +22,8 @@ export default function ${PATTERNS.originName}(props: any) {
 }
 `
 
-function getCompileParamsFactory(config: Config) {
-  return (rewrite: Rewrite): CompileParams<keyof typeof PATTERNS> => {
+function getCompileParams(config: Config) {
+  return (rewrite: Rewrite): CompileParams<typeof PATTERNS> => {
     const getOriginPath = getOriginPathFactory(config)
     const getOriginName = getOriginNameFactory('layout')
     const getLocale = getLocaleFactory({
@@ -40,10 +40,12 @@ function getCompileParamsFactory(config: Config) {
 }
 
 export function compileFactory(config: Config) {
-  return (rewrite: Rewrite) => {
-    const compileTemplate = compileTemplateFactory(tpl)
-    const getParams = getCompileParamsFactory(config)
+  const getParams = getCompileParams(config)
 
-    return compileTemplate(getParams(rewrite))
+  return (rewrite: Rewrite) => {
+    const params = getParams(rewrite)
+
+    const compileTemplate = compileTemplateFactory()
+    return compileTemplate(tpl, params)
   }
 }

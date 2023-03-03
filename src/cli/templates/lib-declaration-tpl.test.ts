@@ -58,16 +58,16 @@ export type RouteParamsDynamic<T extends RouteName> = T extends '/blog/articles/
 export class Router {
   constructor(schema: Schema)
   
-  setLocation(href: string): void
-  
   getHref<T extends RouteNameDynamic>(name: T, params: RouteParamsDynamic<T>): string
   getHref<T extends RouteNameStatic>(name: T): string
   getHref<T extends RouteNameStatic>(name: T, params: RouteParamsStatic): string
 
-  getHrefLocale(href: string): string
-  
-  getRouteByHref(href: string): Route | undefined
+  getLocaleFromHref(href: string): string
+  getRouteFromHref(href: string): Route | undefined
 }
+
+export function compileHref(href: string, params: Record<string, string>): string
+export function formatHref(href: string, params: Record<string, string>): string
 
 export const schema: Schema;
 `

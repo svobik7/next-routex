@@ -2,14 +2,14 @@ import type { Key } from 'path-to-regexp'
 import { pathToRegexp } from 'path-to-regexp'
 import type { Route, RouterSchema } from '~/types'
 import type { CompileParams } from './tpl-utils'
-import { compileTemplateFactory, getPattern } from './tpl-utils'
+import { compileTemplateFactory, getPatternsFromNames } from './tpl-utils'
 
-export const PATTERNS = {
-  routeLocales: getPattern('routeLocales'),
-  routeNamesStatic: getPattern('routeNamesStatic'),
-  routeNamesDynamic: getPattern('routeNamesDynamic'),
-  routeParamsDynamic: getPattern('routeParamsDynamic'),
-}
+export const PATTERNS = getPatternsFromNames(
+  'routeLocales',
+  'routeNamesStatic',
+  'routeNamesDynamic',
+  'routeParamsDynamic'
+)
 
 export const tpl = `
 export type RouteLocale = ${PATTERNS.routeLocales};
@@ -25,16 +25,16 @@ export type RouteParamsDynamic<T extends RouteName> = ${PATTERNS.routeParamsDyna
 export class Router {
   constructor(schema: Schema)
   
-  setLocation(href: string): void
-  
   getHref<T extends RouteNameDynamic>(name: T, params: RouteParamsDynamic<T>): string
   getHref<T extends RouteNameStatic>(name: T): string
   getHref<T extends RouteNameStatic>(name: T, params: RouteParamsStatic): string
 
-  getHrefLocale(href: string): string
-  
-  getRouteByHref(href: string): Route | undefined
+  getLocaleFromHref(href: string): string
+  getRouteFromHref(href: string): Route | undefined
 }
+
+export function compileHref(href: string, params: Record<string, string>): string
+export function formatHref(href: string, params: Record<string, string>): string
 
 export const schema: Schema;
 `
@@ -103,7 +103,7 @@ function getDynamicRouteParams(schema: RouterSchema) {
 
 function getCompileParams(
   schema: RouterSchema
-): CompileParams<keyof typeof PATTERNS> {
+): CompileParams<typeof PATTERNS> {
   return {
     routeLocales: formatPipedStrings(schema.locales),
     routeNamesDynamic: formatPipedStrings(getDynamicRouteNames(schema)),
@@ -113,7 +113,8 @@ function getCompileParams(
 }
 
 export function compile(schema: RouterSchema) {
-  const compileTemplate = compileTemplateFactory(tpl)
-  const compileParams = getCompileParams(schema)
-  return compileTemplate(compileParams)
+  const params = getCompileParams(schema)
+
+  const compileTemplate = compileTemplateFactory()
+  return compileTemplate(tpl, params)
 }

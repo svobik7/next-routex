@@ -16,7 +16,7 @@ export function getPathNameWithoutSymbols(pathName: string): string {
 }
 
 export function getPathNameInPascalCase(pathName: string): string {
-  return pathName.split('/').map(capitalize).join('')
+  return pathName.split(/[-/_]/g).map(capitalize).join('')
 }
 
 type FormattedPath = `/${string}`

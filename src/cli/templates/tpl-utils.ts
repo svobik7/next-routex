@@ -9,27 +9,33 @@ import {
 import { pipe } from '~/utils/pipe-utils'
 import type { Config, Rewrite } from '../types'
 
-export function getPattern(replacementName: string) {
-  return `{{${replacementName}}}`
+export type CompileFn = (tpl: string, params: CompileParams) => string
+export type CompileParams<K extends object = object> = {
+  [P in keyof K]: string
 }
 
-export const PATTERNS = {
-  originName: getPattern('originPath'),
-  originPath: getPattern('originName'),
-  routeName: getPattern('routeName'),
-  routeHref: getPattern('routeHref'),
-  locale: getPattern('locale'),
+export function getPattern(name: string) {
+  return `{{${name}}}`
 }
 
-export type CompileParams<K extends keyof any> = { [P in K]: string }
+export function getPatternsFromNames<T extends string>(...names: T[]) {
+  return names.reduce(
+    (acc, name) => ({ ...acc, [name]: getPattern(name) }),
+    {} as Record<T, string>
+  )
+}
 
-export function compileTemplateFactory(template: string) {
-  return (replacements: Record<string, string>) => {
-    let output = template
-    Object.keys(replacements).forEach((key) => {
-      output = output.replaceAll(getPattern(key), replacements[key] || '')
-    })
-    return output
+export function compileTemplateFactory(...decorators: CompileFn[]): CompileFn {
+  return (tpl: string, params: CompileParams) => {
+    // @ts-ignore ignoring more decorators than pipe type expects
+    const decorate = pipe(...decorators.filter(Boolean))
+    const decoratedTemplate = decorate(tpl)
+
+    return Object.entries(params).reduce(
+      (output, [name, value]) =>
+        output.replaceAll(getPattern(name), value || ''),
+      decoratedTemplate
+    )
   }
 }
 

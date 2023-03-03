@@ -9,16 +9,15 @@ const defaultConfig: Config = {
   getDistAbsolutePath: () => '',
   getLocalizedAbsolutePath: () => '',
   getOriginAbsolutePath: () => '',
+  getOriginContents: () => '',
 }
 
 test('should create root page', () => {
   const expectedOutput = `
 import RootPageOrigin from '../../roots/page'
 
-const route = { name: '/', href: '/cs' }
-
 export default function RootPage(props: any) {
-  return <RootPageOrigin {...props} route={route} />
+  return <RootPageOrigin {...props} pageHref="/cs" />
 }
 `
   const inputRewrite = {
@@ -28,10 +27,10 @@ export default function RootPage(props: any) {
 
   const inputConfig = {
     ...defaultConfig,
-    // resolves to = /:head/app/cs/page.ts
+    // resolves to = /AbsolutePathHead/app/cs/page.ts
     getLocalizedAbsolutePath: (fileName = '') =>
       path.join('/AbsolutePathHead/app', fileName),
-    // resolves to = /:head/roots/page.ts
+    // resolves to = /AbsolutePathHead/roots/page.ts
     getOriginAbsolutePath: (fileName = '') =>
       path.join('/AbsolutePathHead/roots', fileName),
   }
@@ -45,10 +44,8 @@ test('should create page for (group) route', () => {
   const expectedOutput = `
 import AuthLoginPageOrigin from '../../../../src/roots/(auth)/login/page'
 
-const route = { name: '/(auth)/login', href: '/cs/prihlaseni' }
-
 export default function AuthLoginPage(props: any) {
-  return <AuthLoginPageOrigin {...props} route={route} />
+  return <AuthLoginPageOrigin {...props} pageHref="/cs/prihlaseni" />
 }
 `
 
@@ -59,9 +56,9 @@ export default function AuthLoginPage(props: any) {
 
   const inputConfig = {
     ...defaultConfig,
-    // resolves to = /:head/app/cs/(auth)/prihlaseni/page.tsx
+    // resolves to = /app/cs/(auth)/prihlaseni/page.tsx
     getLocalizedAbsolutePath: (fileName = '') => path.join('/app', fileName),
-    // resolves to = /:head/src/roots/(auth)/prihlaseni/page.tsx
+    // resolves to = /src/roots/(auth)/prihlaseni/page.tsx
     getOriginAbsolutePath: (fileName = '') => path.join('/src/roots', fileName),
   }
 
@@ -73,11 +70,10 @@ export default function AuthLoginPage(props: any) {
 test('should create page for [dynamic] route', () => {
   const expectedOutput = `
 import BlogAuthorIdPageOrigin from '../../../../../roots/blog/[authorId]/page'
+import { compileHref } from 'next-roots'
 
-const route = { name: '/blog/[authorId]', href: '/cs/magazin/:authorId' }
-
-export default function BlogAuthorIdPage(props: any) {
-  return <BlogAuthorIdPageOrigin {...props} route={route} />
+export default function BlogAuthorIdPage({ params, ...otherProps }: any) {
+  return <BlogAuthorIdPageOrigin {...otherProps} params={params} pageHref={compileHref('/cs/magazin/:authorId', params)} />
 }
 `
   const inputRewrite = {
@@ -87,11 +83,93 @@ export default function BlogAuthorIdPage(props: any) {
 
   const inputConfig = {
     ...defaultConfig,
-    // resolves to = /:head/src/app/cs/magazin/[authorId]/page.ts
+    // resolves to = /src/app/cs/magazin/[authorId]/page.ts
     getLocalizedAbsolutePath: (fileName = '') =>
       path.join('/src/app', fileName),
-    // resolves to = /:head/roots/magazin/[authorId]/page.ts
+    // resolves to = /roots/magazin/[authorId]/page.ts
     getOriginAbsolutePath: (fileName = '') => path.join('/roots', fileName),
+  }
+
+  const compile = compileFactory(inputConfig)
+  const output = compile(inputRewrite)
+  expect(output).toBe(expectedOutput)
+})
+
+test('should create page with static metadata object', () => {
+  const expectedOutput = `
+import StaticMetaDataPageOrigin from '..'
+
+export default function StaticMetaDataPage(props: any) {
+  return <StaticMetaDataPageOrigin {...props} pageHref="/cs/static-meta-data" />
+}
+
+export { metadata } from '..'
+`
+  const inputRewrite = {
+    originPath: '/static-meta-data/page.ts',
+    localizedPath: '/cs/static-meta-data/page.ts',
+  }
+
+  const inputConfig: Config = {
+    ...defaultConfig,
+    getOriginContents: () =>
+      `export const metadata = { title: "Static Title" }`,
+  }
+
+  const compile = compileFactory(inputConfig)
+  const output = compile(inputRewrite)
+  expect(output).toBe(expectedOutput)
+})
+
+test('should create page with dynamic metadata function', () => {
+  const expectedOutput = `
+import DynamicMetaDataPageOrigin from '..'
+
+export default function DynamicMetaDataPage(props: any) {
+  return <DynamicMetaDataPageOrigin {...props} pageHref="/cs/dynamic-meta-data" />
+}
+
+export { generateMetadata } from '..'
+`
+  const inputRewrite = {
+    originPath: '/dynamic-meta-data/page.ts',
+    localizedPath: '/cs/dynamic-meta-data/page.ts',
+  }
+
+  const inputConfig: Config = {
+    ...defaultConfig,
+    getOriginContents: () => `export async function generateMetadata() {}`,
+  }
+
+  const compile = compileFactory(inputConfig)
+  const output = compile(inputRewrite)
+  expect(output).toBe(expectedOutput)
+})
+
+test('should create page with generate static params function', () => {
+  const expectedOutput = `
+import GenerateStaticParamsPageOrigin from '..'
+
+export default function GenerateStaticParamsPage(props: any) {
+  return <GenerateStaticParamsPageOrigin {...props} pageHref="/cs/generate-static-params" />
+}
+
+import {generateStaticParams as generateStaticParamsOrigin} from '..'
+
+export async function generateStaticParams(props) {
+  return generateStaticParamsOrigin({ ...props, route, locale: 'cs'  })
+}
+`
+  const inputRewrite = {
+    originPath: '/generate-static-params/page.ts',
+    localizedPath: '/cs/generate-static-params/page.ts',
+  }
+
+  const inputConfig: Config = {
+    ...defaultConfig,
+    defaultLocale: 'cs',
+    locales: ['cs'],
+    getOriginContents: () => `export async function generateStaticParams() {}`,
   }
 
   const compile = compileFactory(inputConfig)

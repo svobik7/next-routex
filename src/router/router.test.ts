@@ -58,26 +58,6 @@ describe('getHref', () => {
   )
 })
 
-describe('getHref with changed location', () => {
-  const router = new Router(inputSchema)
-
-  const testCases = [
-    ['/(auth)/login', { location: '/cs/blog' }, '/cs/prihlaseni'],
-    ['/(auth)/login', { location: '/es/blog' }, '/es/acceso'],
-    ['/(auth)/login', { location: '/blog' }, '/es/acceso'],
-  ] as const
-
-  test.each(testCases)(
-    'given %s and %o as arguments, returns %s',
-    (routeName, params, expectedResult) => {
-      router.setLocation(params.location)
-
-      const result = router.getHref(routeName, params)
-      expect(result).toEqual(expectedResult)
-    }
-  )
-})
-
 describe('getHrefLocale', () => {
   const router = new Router(inputSchema)
 
@@ -88,7 +68,7 @@ describe('getHrefLocale', () => {
   ] as const
 
   test.each(testCases)('given %s and returns %s', (href, expectedResult) => {
-    const result = router.getHrefLocale(href)
+    const result = router.getLocaleFromHref(href)
     expect(result).toEqual(expectedResult)
   })
 })
@@ -120,7 +100,7 @@ describe('getRouteByHref', () => {
   test.each(testCases)(
     'given %s as arguments, returns %o',
     (pathName, expectedResult) => {
-      const result = router.getRouteByHref(pathName)
+      const result = router.getRouteFromHref(pathName)
       expect(result).toStrictEqual(expectedResult)
     }
   )

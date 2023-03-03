@@ -9,6 +9,7 @@ const defaultConfig: Config = {
   getDistAbsolutePath: () => '',
   getLocalizedAbsolutePath: () => '',
   getOriginAbsolutePath: () => '',
+  getOriginContents: () => '',
 }
 
 test('should create root layout', () => {

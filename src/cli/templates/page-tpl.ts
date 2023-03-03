@@ -1,32 +1,45 @@
+import { getLocaleFactory } from '~/utils/locale-utils'
+import { isDynamicRewrite } from '~/utils/rewrite-utils'
 import type { Config, Rewrite } from '../types'
 import { getRoute } from '../utils/getRoute'
+import type { PATTERNS as GENERATE_STATIC_PARAMS_PATTERS } from './decorators/with-page-generate-static-params'
+import { withPageGenerateStaticParamsFactory } from './decorators/with-page-generate-static-params'
+import { withPageMetadataDecoratorFactory } from './decorators/with-page-matedata'
 import type { CompileParams } from './tpl-utils'
 import {
   compileTemplateFactory,
   getOriginNameFactory,
   getOriginPathFactory,
-  getPattern,
+  getPatternsFromNames,
 } from './tpl-utils'
 
-export const PATTERNS = {
-  originPath: getPattern('originPath'),
-  originName: getPattern('originName'),
-  routeName: getPattern('routeName'),
-  routeHref: getPattern('routeHref'),
-}
+export const PATTERNS = getPatternsFromNames(
+  'originPath',
+  'originName',
+  'pageHref'
+)
 
-export const tpl = `
+export const tplStatic = `
 import ${PATTERNS.originName}Origin from '${PATTERNS.originPath}'
 
-const route = { name: '${PATTERNS.routeName}', href: '${PATTERNS.routeHref}' }
-
 export default function ${PATTERNS.originName}(props: any) {
-  return <${PATTERNS.originName}Origin {...props} route={route} />
+  return <${PATTERNS.originName}Origin {...props} pageHref="${PATTERNS.pageHref}" />
+}
+`
+
+export const tplDynamic = `
+import ${PATTERNS.originName}Origin from '${PATTERNS.originPath}'
+import { compileHref } from 'next-roots'
+
+export default function ${PATTERNS.originName}({ params, ...otherProps }: any) {
+  return <${PATTERNS.originName}Origin {...otherProps} params={params} pageHref={compileHref('${PATTERNS.pageHref}', params)} />
 }
 `
 
 function getCompileParamsFactory(config: Config) {
-  return (rewrite: Rewrite): CompileParams<keyof typeof PATTERNS> => {
+  return (
+    rewrite: Rewrite
+  ): CompileParams<typeof PATTERNS & typeof GENERATE_STATIC_PARAMS_PATTERS> => {
     const route = getRoute(rewrite)
 
     if (!route) {
@@ -35,21 +48,34 @@ function getCompileParamsFactory(config: Config) {
 
     const getOriginPath = getOriginPathFactory(config)
     const getOriginName = getOriginNameFactory('page')
+    const getLocale = getLocaleFactory({
+      defaultLocale: config.defaultLocale,
+      locales: config.locales,
+    })
 
     return {
       originPath: getOriginPath(rewrite),
       originName: getOriginName(rewrite),
-      routeName: route.name,
-      routeHref: route.href,
+      pageHref: route.href,
+      locale: getLocale(rewrite.localizedPath),
     }
   }
 }
 
 export function compileFactory(config: Config) {
-  return (rewrite: Rewrite) => {
-    const compileTemplate = compileTemplateFactory(tpl)
-    const getParams = getCompileParamsFactory(config)
+  const getCompileParams = getCompileParamsFactory(config)
 
-    return compileTemplate(getParams(rewrite))
+  return (rewrite: Rewrite) => {
+    const tpl = isDynamicRewrite(rewrite) ? tplDynamic : tplStatic
+    const params = getCompileParams(rewrite)
+
+    const originContents = config.getOriginContents(rewrite.originPath)
+
+    const compileTemplate = compileTemplateFactory(
+      withPageMetadataDecoratorFactory(originContents),
+      withPageGenerateStaticParamsFactory(originContents)
+    )
+
+    return compileTemplate(tpl, params)
   }
 }

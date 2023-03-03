@@ -12,6 +12,7 @@ export type Config = {
   getOriginAbsolutePath: (fileName?: string) => string
   getDistAbsolutePath: (fileName?: string) => string
   getCacheAbsolutePath: (fileName?: string) => string
+  getOriginContents: (fileName: string) => string
 }
 
 export type Origin = {
