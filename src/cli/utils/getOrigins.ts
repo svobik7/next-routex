@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import { isDirectory } from '~/utils/fs-utils'
-import { formatPath } from '~/utils/path-utils'
+import { asRootPath } from '~/utils/path-utils'
 import type { Origin, RootTranslation } from '../types'
 
 const I18N_FILE_NAMES = ['i18n.mjs', 'i18n.js']
@@ -58,11 +58,15 @@ async function getI18n(
  * @returns
  */
 function getOriginFiles(dirName: string) {
+  const priority = (fileName: string): number => Number(isDirectory(path.join(dirName, fileName)))
+
   return (
     fs
       .readdirSync(dirName)
       // do not include i18n files to copied into app folder
-      .filter((itemName) => !itemName.match(/^i18n\.(m?js)$/))
+      .filter((fileName) => !fileName.match(/^i18n\.(m?js)$/))
+      // make sure directories are always at the top of the list
+      .sort((a, b) => priority(b) - priority(a))
   )
 }
 
@@ -86,10 +90,10 @@ export async function getOrigins({
     const originFileName = path.join(dirName, fileName)
 
     const origin: Origin = {
-      path: formatPath(parentOrigin?.path || '', fileName),
+      path: asRootPath(parentOrigin?.path || '', fileName),
       localizations: locales.map((tl) => ({
         locale: tl,
-        path: formatPath(
+        path: asRootPath(
           parentOrigin?.localizations.find((t) => t.locale === tl)?.path || '',
           fileName
         ),

@@ -4,7 +4,8 @@ export type Route = {
 }
 
 export type RouterSchema = {
-  defaultLocale: string
-  locales: string[]
   routes: Record<string, Route[]>
+  locales: string[]
+  defaultLocale: string
+  prefixDefaultLocale: boolean
 }

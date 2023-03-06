@@ -3,14 +3,6 @@ import { getOrigins } from './getOrigins'
 
 const expectedOutput: Origin[] = [
   {
-    path: '/(auth)/layout.ts',
-    localizations: [
-      { locale: 'en', path: '/(auth)/layout.ts' },
-      { locale: 'cs', path: '/(auth)/layout.ts' },
-      { locale: 'es', path: '/(auth)/layout.ts' },
-    ],
-  },
-  {
     path: '/(auth)/login/page.tsx',
     localizations: [
       { locale: 'en', path: '/(auth)/log-in/page.tsx' },
@@ -28,11 +20,11 @@ const expectedOutput: Origin[] = [
     ],
   },
   {
-    path: '/account/layout.js',
+    path: '/(auth)/layout.ts',
     localizations: [
-      { locale: 'en', path: '/account/layout.js' },
-      { locale: 'cs', path: '/ucet/layout.js' },
-      { locale: 'es', path: '/cuenta/layout.js' },
+      { locale: 'en', path: '/(auth)/layout.ts' },
+      { locale: 'cs', path: '/(auth)/layout.ts' },
+      { locale: 'es', path: '/(auth)/layout.ts' },
     ],
   },
   {
@@ -57,6 +49,14 @@ const expectedOutput: Origin[] = [
       { locale: 'en', path: '/account/settings/page.tsx' },
       { locale: 'cs', path: '/ucet/nastaveni/page.tsx' },
       { locale: 'es', path: '/cuenta/ajustes/page.tsx' },
+    ],
+  },
+  {
+    path: '/account/layout.js',
+    localizations: [
+      { locale: 'en', path: '/account/layout.js' },
+      { locale: 'cs', path: '/ucet/layout.js' },
+      { locale: 'es', path: '/cuenta/layout.js' },
     ],
   },
   {

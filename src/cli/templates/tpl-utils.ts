@@ -1,10 +1,8 @@
 import path from 'path'
 import { getDiffPos } from '~/cli/utils/getDiffPos'
 import {
-  formatPath,
-  getPathNameInPascalCase,
-  getPathNameWithoutExt,
-  getPathNameWithoutSymbols,
+  alphanumeric, capitalize,
+  asRootPath, trimExt, trimLeadingSlash, withUnixSeparators, joinSegments
 } from '~/utils/path-utils'
 import { pipe } from '~/utils/pipe-utils'
 import type { Config, Rewrite } from '../types'
@@ -54,35 +52,39 @@ export function getOriginPathFactory({
       localizedAbsolutePath
     )
 
-    const originRelativePath = formatPath(
+    const originRelativePath = asRootPath(
       originAbsolutePath.slice(firstDiffPosition)
     )
-    const localizedRelativePath = formatPath(
+    const localizedRelativePath = asRootPath(
       localizedAbsolutePath.slice(firstDiffPosition)
     )
 
     const hopUps = path
       .dirname(localizedRelativePath)
-      .split('/')
+      .split("/")
       .slice(1)
       .map(() => '..')
 
-    return getPathNameWithoutExt(path.join(...hopUps, originRelativePath))
+    const pathSegments = [...hopUps, originRelativePath]
+    
+    const formatPath = pipe(withUnixSeparators, trimExt, trimLeadingSlash)
+    return formatPath(joinSegments(...pathSegments))
   }
 }
 
 export function getOriginNameFactory(suffix = 'page') {
   return (rewrite: Rewrite) => {
-    const getName = pipe(
-      getPathNameWithoutExt,
-      getPathNameWithoutSymbols,
-      getPathNameInPascalCase
+    const getSegmentName = pipe(
+      trimExt,
+      alphanumeric,
+      capitalize
     )
 
-    return getName(
-      rewrite.originPath.match(new RegExp(`^/${suffix}.([tj])sx?$`))
-        ? `root/${suffix}`
-        : rewrite.originPath
-    )
+    const originPathName = rewrite.originPath.match(new RegExp(`^/${suffix}.([tj])sx?$`))
+      ? `root/${suffix}`
+      : rewrite.originPath
+
+    // get origin path name segments split by / or - or _
+    return originPathName.split(/[-/_]/g).map(getSegmentName).join("")
   }
 }

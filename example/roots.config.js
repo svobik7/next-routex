@@ -6,4 +6,5 @@ module.exports = {
   localizeDir: path.resolve(__dirname, 'app'),
   locales: ['en', 'cs', 'es'],
   defaultLocale: 'en',
+  prefixDefaultLocale: true,
 }

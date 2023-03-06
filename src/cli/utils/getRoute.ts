@@ -1,5 +1,5 @@
 import type { Route } from '~/types'
-import { formatPath } from '~/utils/path-utils'
+import { asRootPath } from '~/utils/path-utils'
 import { pipe } from '~/utils/pipe-utils'
 import type { Rewrite } from '../types'
 
@@ -17,7 +17,7 @@ function formatDynamicSegments(input: string) {
 
 function getRouteName({ originPath }: Rewrite) {
   const formatRouteName = pipe(removePageSegment)
-  return formatPath(formatRouteName(originPath))
+  return asRootPath(formatRouteName(originPath))
 }
 
 function getRouteHref({ localizedPath }: Rewrite) {
@@ -25,7 +25,7 @@ function getRouteHref({ localizedPath }: Rewrite) {
     removePageSegment,
     removeGroupSegments,
     formatDynamicSegments,
-    formatPath
+    asRootPath
   )
 
   return formatRouteHref(localizedPath)

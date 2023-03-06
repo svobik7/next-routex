@@ -4,31 +4,39 @@ export function capitalize(input: string) {
   return input.charAt(0).toUpperCase() + input.slice(1)
 }
 
-export function getPathNameWithoutExt(pathName: string): string {
-  const newFileName = path.basename(pathName, path.extname(pathName))
-  const newFilePath = path.join(path.dirname(pathName), newFileName)
 
-  return newFilePath
+export function alphanumeric(pathName: string): string {
+  return pathName.replace(/[^a-zA-Z0-9]/gi, '')
 }
 
-export function getPathNameWithoutSymbols(pathName: string): string {
-  return pathName.replace(/[^a-zA-Z0-9/_-]+/gi, '')
+export function trimExt(pathName: string): string {
+  return pathName.replace(/\.[^/.]+$/, "")
 }
 
-export function getPathNameInPascalCase(pathName: string): string {
-  return pathName.split(/[-/_]/g).map(capitalize).join('')
+
+export function trimLeadingSlash(pathName: string): string {
+  return pathName.startsWith('/') ? pathName.slice(1) : pathName
 }
 
-type FormattedPath = `/${string}`
+export function withUnixSeparators(pathName: string) {
+  pathName = pathName.replaceAll(path.sep, '/')
+  pathName = pathName.replace(/\/\/+/g, '/')
+  pathName = pathName.replace(/\/$/, '')
 
-export function formatPath(input: string): FormattedPath
-export function formatPath(...input: string[]): FormattedPath
-export function formatPath(...input: string[]): FormattedPath {
-  let pathName = input.join('/')
+  return pathName
+}
 
+export function joinSegments(...segments: string[]) {
+  return segments.join('/')
+}
+
+type RootPath = `/${string}`
+
+export function asRootPath(...input: string[]): RootPath {
+  let pathName = joinSegments(...input)
+
+  pathName = withUnixSeparators(pathName)
   pathName = pathName.startsWith('/') ? pathName : `/${pathName}`
-  pathName = pathName.replace(/\/\/+/g, '/').replace(/\/$/, '')
-  pathName = pathName || '/'
 
-  return pathName as FormattedPath
+  return pathName as RootPath
 }

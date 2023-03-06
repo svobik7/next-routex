@@ -10,7 +10,7 @@ import {
   compileTemplateFactory,
   getOriginNameFactory,
   getOriginPathFactory,
-  getPatternsFromNames,
+  getPatternsFromNames
 } from './tpl-utils'
 
 export const PATTERNS = getPatternsFromNames(
